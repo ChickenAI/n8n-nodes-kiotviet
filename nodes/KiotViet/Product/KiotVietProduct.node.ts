@@ -16,251 +16,247 @@ import type {
 type ProductResponse = Product | KiotVietListResponse<Product> | OperationResult;
 
 export class KiotVietProduct implements INodeType {
-		description: INodeTypeDescription = {
-			displayName: 'KiotViet Product',
-			name: 'kiotVietProduct',
-			icon: 'file:../shared/kiotviet.svg',
-			group: ['transform'],
-			version: 1,
-			subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-			description: 'Manage KiotViet products',
-			defaults: {
-				name: 'KiotViet Product',
+	description: INodeTypeDescription = {
+		displayName: 'Sản Phẩm KiotViet',
+		name: 'kiotVietProduct',
+		icon: 'file:../shared/kiotviet.svg',
+		group: ['transform'],
+		version: 1,
+		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		description: 'Quản lý sản phẩm từ KiotViet',
+		defaults: {
+			name: 'Sản Phẩm KiotViet',
+		},
+		inputs: ['main'],
+		outputs: ['main'],
+		credentials: [
+			{
+				name: 'kiotVietApi',
+				required: true,
 			},
-			inputs: ['main'],
-			outputs: ['main'],
-			credentials: [
-				{
-					name: 'kiotVietApi',
-					required: true,
-				},
-			],
-			properties: [
-				{
-					displayName: 'Operation',
-					name: 'operation',
-					type: 'options',
-					noDataExpression: true,
-					options: [
-						{
-							name: 'Create',
-							value: 'create',
-							description: 'Create a new product',
-							action: 'Create a product',
-						},
-						{
-							name: 'Delete',
-							value: 'delete',
-							description: 'Delete a product',
-							action: 'Delete a product',
-						},
-						{
-							name: 'Get',
-							value: 'get',
-							description: 'Get a product by ID',
-							action: 'Get a product',
-						},
-						{
-							name: 'Get Many',
-							value: 'getAll',
-							description: 'Get many products',
-							action: 'Get many products',
-						},
-						{
-							name: 'Update',
-							value: 'update',
-							description: 'Update a product',
-							action: 'Update a product',
-						},
-					],
-					default: 'getAll',
-				},
-				// Fields for Get operation
-				{
-					displayName: 'Product ID',
-					name: 'productId',
-					type: 'string',
-					required: true,
-					default: '',
-					displayOptions: {
-						show: {
-							operation: ['get', 'update', 'delete'],
-						},
+		],
+		properties: [
+			{
+				displayName: 'Thao Tác',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Tạo Mới',
+						value: 'create',
+						description: 'Tạo sản phẩm mới',
+						action: 'Tạo sản phẩm',
 					},
-					description: 'The ID of the product',
-				},
-				// Fields for Get Many operation
-				{
-					displayName: 'Return All',
-					name: 'returnAll',
-					type: 'boolean',
-					default: false,
-					description: 'Whether to return all results or only up to a given limit',
-					displayOptions: {
-						show: {
-							operation: ['getAll'],
-						},
+					{
+						name: 'Xoá',
+						value: 'delete',
+						description: 'Xoá sản phẩm',
+						action: 'Xoá sản phẩm',
+					},
+					{
+						name: 'Lấy Theo ID',
+						value: 'get',
+						description: 'Lấy sản phẩm theo ID',
+						action: 'Lấy sản phẩm',
+					},
+					{
+						name: 'Lấy Nhiều',
+						value: 'getAll',
+						description: 'Lấy danh sách sản phẩm',
+						action: 'Lấy danh sách sản phẩm',
+					},
+					{
+						name: 'Cập Nhật',
+						value: 'update',
+						description: 'Cập nhật sản phẩm',
+						action: 'Cập nhật sản phẩm',
+					},
+				],
+				default: 'getAll',
+			},
+			{
+				displayName: 'ID Sản Phẩm',
+				name: 'productId',
+				type: 'string',
+				required: true,
+				default: '',
+				displayOptions: {
+					show: {
+						operation: ['get', 'update', 'delete'],
 					},
 				},
-				{
-					displayName: 'Limit',
-					name: 'limit',
-					type: 'number',
-					default: 50,
-					description: 'Max number of results to return',
-					typeOptions: {
-						minValue: 1,
-					},
-					displayOptions: {
-						show: {
-							operation: ['getAll'],
-							returnAll: [false],
-						},
+				description: 'Mã định danh của sản phẩm',
+			},
+			{
+				displayName: 'Lấy Toàn Bộ',
+				name: 'returnAll',
+				type: 'boolean',
+				default: false,
+				description: 'Lấy toàn bộ kết quả hoặc giới hạn số lượng',
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
 					},
 				},
-				// Fields for Create/Update operations
-				{
-					displayName: 'Product Name',
-					name: 'name',
-					type: 'string',
-					default: '',
-					required: true,
-					displayOptions: {
-						show: {
-							operation: ['create', 'update'],
-						},
-					},
-					description: 'Name of the product',
+			},
+			{
+				displayName: 'Giới Hạn',
+				name: 'limit',
+				type: 'number',
+				default: 50,
+				description: 'Số lượng kết quả tối đa cần lấy',
+				typeOptions: {
+					minValue: 1,
 				},
-				{
-					displayName: 'Category ID',
-					name: 'categoryId',
-					type: 'string',
-					default: '',
-					required: true,
-					displayOptions: {
-						show: {
-							operation: ['create'],
-						},
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
+						returnAll: [false],
 					},
-					description: 'ID of the category this product belongs to',
 				},
-				{
-					displayName: 'Base Price',
-					name: 'basePrice',
-					type: 'number',
-					default: 0,
-					required: true,
-					displayOptions: {
-						show: {
-							operation: ['create'],
-						},
+			},
+			{
+				displayName: 'Tên Sản Phẩm',
+				name: 'name',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['create', 'update'],
 					},
-					description: 'Base price of the product',
 				},
-				{
-					displayName: 'Retail Price',
-					name: 'retailPrice',
-					type: 'number',
-					default: 0,
-					required: true,
-					displayOptions: {
-						show: {
-							operation: ['create'],
-						},
+				description: 'Tên của sản phẩm',
+			},
+			{
+				displayName: 'ID Danh Mục',
+				name: 'categoryId',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['create'],
 					},
-					description: 'Retail price of the product',
 				},
-				{
-					displayName: 'Additional Fields',
-					name: 'additionalFields',
-					type: 'collection',
-					placeholder: 'Add Field',
-					default: {},
-					displayOptions: {
-						show: {
-							operation: ['create', 'update'],
-						},
+				description: 'Mã danh mục mà sản phẩm thuộc về',
+			},
+			{
+				displayName: 'Giá Gốc',
+				name: 'basePrice',
+				type: 'number',
+				default: 0,
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['create'],
 					},
-					options: [
-						{
-							displayName: 'Code',
-							name: 'code',
-							type: 'string',
-							default: '',
-							description: 'Product code',
-						},
-						{
-							displayName: 'Description',
-							name: 'description',
-							type: 'string',
-							default: '',
-							description: 'Product description',
-						},
-						{
-							displayName: 'Unit',
-							name: 'unit',
-							type: 'string',
-							default: '',
-							description: 'Product unit',
-						},
-						{
-							displayName: 'Allow Sale',
-							name: 'allowsSale',
-							type: 'boolean',
-							default: true,
-							description: 'Whether the product can be sold',
-						},
-					],
 				},
-				// Fields for filtering Get Many operation
-				{
-					displayName: 'Filters',
-					name: 'filters',
-					type: 'collection',
-					placeholder: 'Add Filter',
-					default: {},
-					displayOptions: {
-						show: {
-							operation: ['getAll'],
-						},
+				description: 'Giá gốc của sản phẩm',
+			},
+			{
+				displayName: 'Giá Bán Lẻ',
+				name: 'retailPrice',
+				type: 'number',
+				default: 0,
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['create'],
 					},
-					options: [
-						{
-							displayName: 'Category ID',
-							name: 'categoryId',
-							type: 'string',
-							default: '',
-							description: 'Filter products by category ID',
-						},
-						{
-							displayName: 'Search Term',
-							name: 'searchTerm',
-							type: 'string',
-							default: '',
-							description: 'Search products by name or code',
-						},
-						{
-							displayName: 'Status',
-							name: 'status',
-							type: 'options',
-							options: [
-								{
-									name: 'Active',
-									value: 'Active',
-								},
-								{
-									name: 'Inactive',
-									value: 'Inactive',
-								},
-							],
-							default: 'Active',
-							description: 'Filter products by status',
-						},
-					],
 				},
-			],
-		};
+				description: 'Giá bán lẻ của sản phẩm',
+			},
+			{
+				displayName: 'Trường Bổ Sung',
+				name: 'additionalFields',
+				type: 'collection',
+				placeholder: 'Thêm Trường',
+				default: {},
+				displayOptions: {
+					show: {
+						operation: ['create', 'update'],
+					},
+				},
+				options: [
+					{
+						displayName: 'Mã Sản Phẩm',
+						name: 'code',
+						type: 'string',
+						default: '',
+						description: 'Mã định danh của sản phẩm',
+					},
+					{
+						displayName: 'Mô Tả',
+						name: 'description',
+						type: 'string',
+						default: '',
+						description: 'Mô tả sản phẩm',
+					},
+					{
+						displayName: 'Đơn Vị',
+						name: 'unit',
+						type: 'string',
+						default: '',
+						description: 'Đơn vị tính của sản phẩm',
+					},
+					{
+						displayName: 'Cho Phép Bán',
+						name: 'allowsSale',
+						type: 'boolean',
+						default: true,
+						description: 'Sản phẩm có được phép bán hay không',
+					},
+				],
+			},
+			{
+				displayName: 'Bộ Lọc',
+				name: 'filters',
+				type: 'collection',
+				placeholder: 'Thêm Bộ Lọc',
+				default: {},
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
+					},
+				},
+				options: [
+					{
+						displayName: 'ID Danh Mục',
+						name: 'categoryId',
+						type: 'string',
+						default: '',
+						description: 'Lọc sản phẩm theo danh mục',
+					},
+					{
+						displayName: 'Từ Khóa Tìm Kiếm',
+						name: 'searchTerm',
+						type: 'string',
+						default: '',
+						description: 'Tìm kiếm sản phẩm theo tên hoặc mã',
+					},
+					{
+						displayName: 'Trạng Thái',
+						name: 'status',
+						type: 'options',
+						options: [
+							{
+								name: 'Đang Hoạt Động',
+								value: 'Active',
+							},
+							{
+								name: 'Ngừng Hoạt Động',
+								value: 'Inactive',
+							},
+						],
+						default: 'Active',
+						description: 'Lọc theo trạng thái sản phẩm',
+					},
+				],
+			},
+		],
+	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
