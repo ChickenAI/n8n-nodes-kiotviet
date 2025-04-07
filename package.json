@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-kiotviet",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, and invoices management",
 	"keywords": [
 		"n8n-community-node-package",
@@ -50,7 +50,9 @@
 			"dist/nodes/KiotViet/Product/KiotVietProduct.node.js",
 			"dist/nodes/KiotViet/Customer/KiotVietCustomer.node.js",
 			"dist/nodes/KiotViet/Order/KiotVietOrder.node.js",
-			"dist/nodes/KiotViet/Invoice/KiotVietInvoice.node.js"
+			"dist/nodes/KiotViet/Invoice/KiotVietInvoice.node.js",
+      "dist/nodes/KiotViet/Category/KiotVietCategory.node.js",
+      "dist/nodes/KiotViet/Trigger/KiotVietTrigger.node.js"
 		],
 		"credentials": [
 			"dist/credentials/KiotVietApi.credentials.js"
