@@ -19,7 +19,7 @@ export class KiotVietCustomer implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Khách hàng KiotViet',
 		name: 'kiotVietCustomer',
-		icon: 'file:kiotviet.svg',
+		icon: 'file:../shared/kiotviet.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',

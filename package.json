@@ -1,13 +1,14 @@
 {
   "name": "n8n-nodes-kiotviet",
   "version": "0.1.0",
-  "description": "n8n integration package for KiotViet retail management system - supporting products, customers, and orders management",
+  "description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, and invoices management",
   "keywords": [
     "n8n-community-node-package",
     "kiotviet",
     "retail",
     "pos",
-    "ecommerce"
+    "ecommerce",
+    "invoice"
   ],
   "license": "MIT",
   "homepage": "https://github.com/doivjpxx/n8n-nodes-kiotviet#readme",
@@ -24,10 +25,12 @@
     "pnpm": ">=9.1"
   },
   "packageManager": "pnpm@9.1.4",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "build": "tsc && gulp build:icons",
+    "clean": "rimraf dist",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
@@ -39,22 +42,39 @@
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/KiotVietApi.credentials.js"
-    ],
     "nodes": [
-      "dist/nodes/KiotViet/Product/Product.node.js",
-      "dist/nodes/KiotViet/Order/Order.node.js",
-      "dist/nodes/KiotViet/Customer/Customer.node.js"
+      {
+        "name": "KiotViet Product",
+        "path": "dist/nodes/KiotViet/Product/KiotVietProduct.node.js"
+      },
+      {
+        "name": "KiotViet Customer",
+        "path": "dist/nodes/KiotViet/Customer/KiotVietCustomer.node.js"
+      },
+      {
+        "name": "KiotViet Order",
+        "path": "dist/nodes/KiotViet/Order/KiotVietOrder.node.js"
+      },
+      {
+        "name": "KiotViet Invoice",
+        "path": "dist/nodes/KiotViet/Invoice/KiotVietInvoice.node.js"
+      }
+    ],
+    "credentials": [
+      {
+        "name": "KiotViet API",
+        "path": "dist/credentials/KiotVietApi.credentials.js"
+      }
     ]
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
+    "@types/node": "^20.11.30",
     "@typescript-eslint/parser": "^7.15.0",
     "eslint": "^8.56.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.1",
     "gulp": "^4.0.2",
     "prettier": "^3.3.2",
+    "rimraf": "^5.0.5",
     "typescript": "^5.5.3"
   },
   "dependencies": {

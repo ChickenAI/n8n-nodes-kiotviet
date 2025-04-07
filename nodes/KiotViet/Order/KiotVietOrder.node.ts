@@ -13,20 +13,19 @@ import type {
 	OrderUpdateParams,
 	KiotVietListResponse,
 	OrderHandler,
-	OrderProduct,
 } from '../shared/KiotVietTypes';
 
 export class KiotVietOrder implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Đơn hàng KiotViet',
+		displayName: 'KiotViet Order',
 		name: 'kiotVietOrder',
-		icon: 'file:kiotviet.svg',
+		icon: 'file:../shared/kiotviet.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Quản lý đơn hàng từ KiotViet',
+		description: 'Manage KiotViet orders',
 		defaults: {
-			name: 'Đơn hàng KiotViet',
+			name: 'KiotViet Order',
 		},
 		inputs: ['main'],
 		outputs: ['main'],
@@ -38,46 +37,47 @@ export class KiotVietOrder implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Thao tác',
+				displayName: 'Operation',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Hủy đơn',
+						name: 'Cancel',
 						value: 'cancel',
-						description: 'Hủy đơn hàng',
-						action: 'Hủy đơn hàng',
+						description: 'Cancel an order',
+						action: 'Cancel an order',
 					},
 					{
-						name: 'Tạo mới',
+						name: 'Create',
 						value: 'create',
-						description: 'Tạo đơn hàng mới',
-						action: 'Tạo đơn hàng',
+						description: 'Create a new order',
+						action: 'Create an order',
 					},
 					{
-						name: 'Lấy theo ID',
+						name: 'Get',
 						value: 'get',
-						description: 'Lấy đơn hàng theo ID',
-						action: 'Lấy đơn hàng',
+						description: 'Get an order by ID',
+						action: 'Get an order',
 					},
 					{
-						name: 'Lấy nhiều',
+						name: 'Get Many',
 						value: 'getAll',
-						description: 'Lấy danh sách đơn hàng',
-						action: 'Lấy danh sách đơn hàng',
+						description: 'Get many orders',
+						action: 'Get many orders',
 					},
 					{
-						name: 'Cập nhật',
+						name: 'Update',
 						value: 'update',
-						description: 'Cập nhật đơn hàng',
-						action: 'Cập nhật đơn hàng',
+						description: 'Update an order',
+						action: 'Update an order',
 					},
 				],
 				default: 'getAll',
 			},
+			// Fields for Get/Update/Cancel operations
 			{
-				displayName: 'ID Đơn hàng',
+				displayName: 'Order ID',
 				name: 'orderId',
 				type: 'string',
 				required: true,
@@ -87,10 +87,11 @@ export class KiotVietOrder implements INodeType {
 						operation: ['get', 'update', 'cancel'],
 					},
 				},
-				description: 'Mã định danh đơn hàng',
+				description: 'The ID of the order',
 			},
+			// Fields for Cancel operation
 			{
-				displayName: 'Lý do hủy',
+				displayName: 'Cancel Reason',
 				name: 'cancelReason',
 				type: 'string',
 				default: '',
@@ -99,10 +100,11 @@ export class KiotVietOrder implements INodeType {
 						operation: ['cancel'],
 					},
 				},
-				description: 'Lý do hủy đơn hàng',
+				description: 'Reason for canceling the order',
 			},
+			// Fields for Create/Update operations
 			{
-				displayName: 'ID Chi nhánh',
+				displayName: 'Branch ID',
 				name: 'branchId',
 				type: 'string',
 				required: true,
@@ -112,12 +114,13 @@ export class KiotVietOrder implements INodeType {
 						operation: ['create'],
 					},
 				},
-				description: 'Mã chi nhánh tạo đơn hàng',
+				description: 'ID of the branch where the order is created',
 			},
+			// Fields for Order Products
 			{
-				displayName: 'Sản phẩm trong đơn hàng',
+				displayName: 'Order Products',
 				name: 'orderProducts',
-				placeholder: 'Thêm sản phẩm',
+				placeholder: 'Add Product',
 				type: 'fixedCollection',
 				typeOptions: {
 					multipleValues: true,
@@ -130,57 +133,58 @@ export class KiotVietOrder implements INodeType {
 				options: [
 					{
 						name: 'products',
-						displayName: 'Sản phẩm',
+						displayName: 'Product',
 						values: [
 							{
-								displayName: 'ID Sản phẩm',
+								displayName: 'Product ID',
 								name: 'productId',
 								type: 'string',
 								default: '',
 								required: true,
-								description: 'Mã định danh sản phẩm',
+								description: 'ID of the product',
 							},
 							{
-								displayName: 'Số lượng',
+								displayName: 'Quantity',
 								name: 'quantity',
 								type: 'number',
 								default: 1,
 								required: true,
-								description: 'Số lượng sản phẩm',
+								description: 'Quantity of the product',
 							},
 							{
-								displayName: 'Giá bán',
+								displayName: 'Price',
 								name: 'price',
 								type: 'number',
 								default: 0,
 								required: true,
-								description: 'Giá bán của sản phẩm',
+								description: 'Price of the product',
 							},
 							{
-								displayName: 'Giảm giá',
+								displayName: 'Discount',
 								name: 'discount',
 								type: 'number',
 								default: 0,
-								description: 'Giảm giá cho sản phẩm',
+								description: 'Discount amount for the product',
 							},
 							{
-								displayName: 'Ghi chú',
+								displayName: 'Note',
 								name: 'note',
 								type: 'string',
 								default: '',
-								description: 'Ghi chú cho sản phẩm',
+								description: 'Note for the product',
 							},
 						],
 					},
 				],
 				default: {},
-				description: 'Danh sách sản phẩm trong đơn hàng',
+				description: 'Products in the order',
 			},
+			// Additional fields for Create/Update
 			{
-				displayName: 'Trường bổ sung',
+				displayName: 'Additional Fields',
 				name: 'additionalFields',
 				type: 'collection',
-				placeholder: 'Thêm trường',
+				placeholder: 'Add Field',
 				default: {},
 				displayOptions: {
 					show: {
@@ -189,116 +193,25 @@ export class KiotVietOrder implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'ID Khách hàng',
+						displayName: 'Customer ID',
 						name: 'customerId',
 						type: 'string',
 						default: '',
-						description: 'Mã định danh khách hàng',
+						description: 'ID of the customer',
 					},
 					{
-						displayName: 'Mô tả đơn hàng',
+						displayName: 'Description',
 						name: 'description',
 						type: 'string',
 						default: '',
-						description: 'Nội dung mô tả đơn hàng',
+						description: 'Order description',
 					},
 					{
-						displayName: 'Giảm giá toàn đơn',
+						displayName: 'Discount',
 						name: 'discount',
 						type: 'number',
 						default: 0,
-						description: 'Tổng số tiền giảm giá cho đơn hàng',
-					},
-					{
-						displayName: 'Xuất hóa đơn',
-						name: 'makeInvoice',
-						type: 'boolean',
-						default: false,
-						description: 'Tạo hóa đơn cho đơn hàng này',
-					},
-				],
-			},
-			{
-				displayName: 'Lấy toàn bộ',
-				name: 'returnAll',
-				type: 'boolean',
-				default: false,
-				description: 'Lấy toàn bộ kết quả hoặc giới hạn theo số lượng',
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
-					},
-				},
-			},
-			{
-				displayName: 'Giới hạn',
-				name: 'limit',
-				type: 'number',
-				default: 50,
-				description: 'Số lượng kết quả tối đa cần lấy',
-				typeOptions: {
-					minValue: 1,
-				},
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
-						returnAll: [false],
-					},
-				},
-			},
-			{
-				displayName: 'Bộ lọc',
-				name: 'filters',
-				type: 'collection',
-				placeholder: 'Thêm bộ lọc',
-				default: {},
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
-					},
-				},
-				options: [
-					{
-						displayName: 'Trạng thái',
-						name: 'status',
-						type: 'options',
-						options: [
-							{
-								name: 'Hoàn tất',
-								value: 'Completed',
-							},
-							{
-								name: 'Đang xử lý',
-								value: 'Processing',
-							},
-							{
-								name: 'Đã hủy',
-								value: 'Canceled',
-							},
-						],
-						default: 'Processing',
-						description: 'Trạng thái đơn hàng cần lấy',
-					},
-					{
-						displayName: 'ID Khách hàng',
-						name: 'customerId',
-						type: 'string',
-						default: '',
-						description: 'Lọc theo mã khách hàng',
-					},
-					{
-						displayName: 'Tạo từ ngày',
-						name: 'createdFrom',
-						type: 'string',
-						default: '',
-						description: 'Lọc đơn hàng tạo từ ngày (YYYY-MM-DD)',
-					},
-					{
-						displayName: 'Tạo đến ngày',
-						name: 'createdTo',
-						type: 'string',
-						default: '',
-						description: 'Lọc đơn hàng tạo đến ngày (YYYY-MM-DD)',
+						description: 'Discount amount for the entire order',
 					},
 				],
 			},
@@ -317,7 +230,6 @@ export class KiotVietOrder implements INodeType {
 			try {
 				const sdkOrderApi = await kiotViet.orders();
 				const orderApi = sdkOrderApi as unknown as OrderHandler;
-
 				let responseData: IDataObject = {};
 
 				if (operation === 'create') {
@@ -329,19 +241,17 @@ export class KiotVietOrder implements INodeType {
 					) as IDataObject[];
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const orderDetails: OrderProduct[] = orderProductsData.map((product) => ({
-						productId: parseInt(product.productId as string),
-						productCode: '', // Will be filled by API
-						productName: '', // Will be filled by API
-						quantity: product.quantity as number,
-						price: product.price as number,
-						discount: product.discount as number,
-						note: product.note as string,
-					}));
-
 					const orderData: OrderCreateParams = {
 						branchId,
-						orderDetails,
+						orderDetails: orderProductsData.map((product) => ({
+							productId: parseInt(product.productId as string),
+							productCode: '',
+							productName: '',
+							quantity: product.quantity as number,
+							price: product.price as number,
+							discount: product.discount as number,
+							note: product.note as string,
+						})),
 						...additionalFields,
 					};
 
@@ -386,25 +296,19 @@ export class KiotVietOrder implements INodeType {
 					) as IDataObject[];
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const orderDetails: OrderProduct[] = orderProductsData.map((product) => ({
-						productId: parseInt(product.productId as string),
-						productCode: '', // Will be filled by API
-						productName: '', // Will be filled by API
-						quantity: product.quantity as number,
-						price: product.price as number,
-						discount: product.discount as number,
-						note: product.note as string,
-					}));
-
 					const orderData: OrderUpdateParams = {
 						id: orderId,
-						orderDetails,
+						orderDetails: orderProductsData.map((product) => ({
+							productId: parseInt(product.productId as string),
+							productCode: '',
+							productName: '',
+							quantity: product.quantity as number,
+							price: product.price as number,
+							discount: product.discount as number,
+							note: product.note as string,
+						})),
 						...additionalFields,
 					};
-
-					if (additionalFields.customerId) {
-						orderData.customerId = parseInt(additionalFields.customerId as string);
-					}
 
 					const response = await orderApi.update(orderId, orderData);
 					responseData = response as unknown as IDataObject;
