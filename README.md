@@ -1,75 +1,80 @@
+![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
+
 # n8n-nodes-kiotviet
 
-This is an n8n community node package that helps you integrate KiotViet retail management system with n8n.
+Đây là một node cộng đồng n8n cho phép bạn sử dụng KiotViet trong quy trình làm việc n8n của mình.
 
-## Features
+KiotViet là hệ thống quản lý bán lẻ đa kênh, giúp doanh nghiệp quản lý sản phẩm, khách hàng, đơn hàng và hoá đơn một cách hiệu quả.
 
-- **Product Management**: Create, read, update, and manage products
-- **Customer Management**: Handle customer data and relationships
-- **Order Management**: Process orders and manage order statuses
+[n8n](https://n8n.io/) là nền tảng tự động hóa quy trình công việc được [cấp phép fair-code](https://docs.n8n.io/reference/license/).
 
-## Installation
+[Cài đặt](#cài-đặt)  
+[Chức năng](#chức-năng)  
+[Xác thực](#xác-thực)  
+[Tương thích](#tương-thích)  
+[Tài nguyên](#tài-nguyên)
 
-Follow these steps to install this package in your n8n instance:
+## Cài đặt
 
-1. Open your n8n instance
-2. Go to **Settings > Community Nodes**
-3. Click on **Install Another Node**
-4. Enter `n8n-nodes-kiotviet`
-5. Click on **Install**
+Làm theo [hướng dẫn cài đặt](https://docs.n8n.io/integrations/community-nodes/installation/) trong tài liệu node cộng đồng n8n.
 
-OR
+## Chức năng
 
-Run the following command in your n8n instance:
+Gói tích hợp này cung cấp các node sau:
 
-```bash
-npm install n8n-nodes-kiotviet
-```
+### KiotViet Product
 
-## Credentials
+- Quản lý danh sách sản phẩm
+- Tạo mới sản phẩm
+- Cập nhật thông tin sản phẩm
+- Xóa sản phẩm
+- Tìm kiếm sản phẩm
 
-To use the KiotViet nodes, you need to authenticate with KiotViet API credentials:
+### KiotViet Customer
 
-1. Get your API credentials from [KiotViet Developer Portal](https://developer.kiotviet.vn)
-2. You will need:
+- Quản lý danh sách khách hàng
+- Tạo mới khách hàng
+- Cập nhật thông tin khách hàng
+- Xóa khách hàng
+- Tìm kiếm khách hàng
+
+### KiotViet Order
+
+- Quản lý danh sách đơn hàng
+- Tạo mới đơn hàng
+- Cập nhật trạng thái đơn hàng
+- Xóa đơn hàng
+- Tìm kiếm đơn hàng
+
+### KiotViet Invoice
+
+- Quản lý danh sách hóa đơn
+- Tạo mới hóa đơn
+- Cập nhật thông tin hóa đơn
+- Xóa hóa đơn
+- Tìm kiếm hóa đơn
+
+## Xác thực
+
+Để sử dụng các node KiotViet, bạn cần:
+
+1. Có tài khoản KiotViet và đăng ký sử dụng API
+2. Lấy Client ID và Client Secret từ KiotViet
+3. Thêm thông tin xác thực trong n8n:
    - Client ID
    - Client Secret
-   - Retailer Name (your KiotViet store name)
+   - Retailer
+   - API Environment (Sandbox/Production)
 
-## Nodes
+## Tương thích
 
-### KiotViet Product Node
+- Yêu cầu n8n phiên bản tối thiểu: v1.0.0
+- Node.js v18.10 trở lên
+- Đã được thử nghiệm trên n8n v1.0.0
 
-Manages products in your KiotViet store.
+## Tài nguyên
 
-**Operations:**
-- Create Product
-- Get Product
-- Get Many Products
-- Update Product
-- Delete Product
-
-### KiotViet Customer Node
-
-Handles customer data in your KiotViet system.
-
-**Operations:**
-- Create Customer
-- Get Customer
-- Get Many Customers
-- Update Customer
-
-### KiotViet Order Node
-
-Manages orders in your KiotViet store.
-
-**Operations:**
-- Create Order
-- Get Order
-- Get Many Orders
-- Update Order
-- Cancel Order
-
-## License
-
-[MIT](LICENSE.md)
+- [Tài liệu KiotVietSDK](https://kiotviet-client-sdk.phonghy.dev/)
+- [Tài liệu node cộng đồng n8n](https://docs.n8n.io/integrations/community-nodes/)
+- [Tài liệu API KiotViet](https://api.kiotviet.vn/docs)
+- [Website KiotViet](https://www.kiotviet.vn)
