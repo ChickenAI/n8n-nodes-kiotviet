@@ -13,7 +13,6 @@ import type {
 	InvoiceUpdateParams,
 	KiotVietListResponse,
 	InvoiceHandler,
-	InvoiceDetail,
 } from '../shared/KiotVietTypes';
 
 export class KiotVietInvoice implements INodeType {
@@ -44,12 +43,6 @@ export class KiotVietInvoice implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Hủy',
-						value: 'cancel',
-						description: 'Hủy hóa đơn',
-						action: 'Hủy hóa đơn',
-					},
-					{
 						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo hóa đơn mới',
@@ -73,6 +66,12 @@ export class KiotVietInvoice implements INodeType {
 						description: 'Cập nhật hóa đơn',
 						action: 'Cập nhật hóa đơn',
 					},
+					{
+						name: 'Hủy',
+						value: 'cancel',
+						description: 'Hủy hóa đơn',
+						action: 'Hủy hóa đơn',
+					},
 				],
 				default: 'getAll',
 			},
@@ -90,18 +89,6 @@ export class KiotVietInvoice implements INodeType {
 				description: 'Mã định danh của hóa đơn',
 			},
 			{
-				displayName: 'Lý Do Hủy',
-				name: 'cancelReason',
-				type: 'string',
-				default: '',
-				displayOptions: {
-					show: {
-						operation: ['cancel'],
-					},
-				},
-				description: 'Lý do hủy hóa đơn',
-			},
-			{
 				displayName: 'ID Chi Nhánh',
 				name: 'branchId',
 				type: 'string',
@@ -112,11 +99,39 @@ export class KiotVietInvoice implements INodeType {
 						operation: ['create'],
 					},
 				},
-				description: 'Mã chi nhánh tạo hóa đơn',
+				description: 'Mã chi nhánh nơi tạo hóa đơn',
+			},
+			{
+				displayName: 'Trả Về Tất Cả',
+				name: 'returnAll',
+				type: 'boolean',
+				default: false,
+				description: 'Trả về tất cả kết quả',
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
+					},
+				},
+			},
+			{
+				displayName: 'Giới Hạn',
+				name: 'limit',
+				type: 'number',
+				default: 50,
+				description: 'Số lượng hóa đơn tối đa trả về',
+				typeOptions: {
+					minValue: 1,
+				},
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
+						returnAll: [false],
+					},
+				},
 			},
 			{
 				displayName: 'Sản Phẩm Trong Hóa Đơn',
-				name: 'invoiceProducts',
+				name: 'invoiceDetails',
 				placeholder: 'Thêm Sản Phẩm',
 				type: 'fixedCollection',
 				typeOptions: {
@@ -177,6 +192,80 @@ export class KiotVietInvoice implements INodeType {
 				description: 'Danh sách sản phẩm trong hóa đơn',
 			},
 			{
+				displayName: 'Bộ Lọc',
+				name: 'filters',
+				type: 'collection',
+				placeholder: 'Thêm Bộ Lọc',
+				default: {},
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
+					},
+				},
+				options: [
+					{
+						displayName: 'Trang',
+						name: 'pageSize',
+						type: 'number',
+						default: 20,
+						description: 'Số lượng kết quả mỗi trang',
+					},
+					{
+						displayName: 'Số Trang',
+						name: 'currentPage',
+						type: 'number',
+						default: 1,
+						description: 'Số trang hiện tại',
+					},
+					{
+						displayName: 'ID Chi Nhánh',
+						name: 'branchId',
+						type: 'string',
+						default: '',
+						description: 'Lọc theo ID chi nhánh',
+					},
+					{
+						displayName: 'Từ Ngày',
+						name: 'fromDate',
+						type: 'string',
+						default: '',
+						description: 'Lọc từ ngày (định dạng YYYY-MM-DD)',
+					},
+					{
+						displayName: 'Đến Ngày',
+						name: 'toDate',
+						type: 'string',
+						default: '',
+						description: 'Lọc đến ngày (định dạng YYYY-MM-DD)',
+					},
+					{
+						displayName: 'Trạng Thái',
+						name: 'status',
+						type: 'options',
+						options: [
+							{
+								name: 'Nháp',
+								value: 'Draft',
+							},
+							{
+								name: 'Đang Xử Lý',
+								value: 'InProgress',
+							},
+							{
+								name: 'Hoàn Thành',
+								value: 'Completed',
+							},
+							{
+								name: 'Đã Hủy',
+								value: 'Canceled',
+							},
+						],
+						default: 'InProgress',
+						description: 'Lọc theo trạng thái hóa đơn',
+					},
+				],
+			},
+			{
 				displayName: 'Trường Bổ Sung',
 				name: 'additionalFields',
 				type: 'collection',
@@ -207,7 +296,7 @@ export class KiotVietInvoice implements INodeType {
 						name: 'discount',
 						type: 'number',
 						default: 0,
-						description: 'Tổng số tiền giảm giá cho hóa đơn',
+						description: 'Tổng số tiền giảm giá cho toàn bộ hóa đơn',
 					},
 					{
 						displayName: 'Phương Thức Thanh Toán',
@@ -235,99 +324,11 @@ export class KiotVietInvoice implements INodeType {
 						description: 'Phương thức thanh toán',
 					},
 					{
-						displayName: 'Tổng Thanh Toán',
+						displayName: 'Số Tiền Thanh Toán',
 						name: 'totalPayment',
 						type: 'number',
 						default: 0,
-						description: 'Tổng số tiền đã thanh toán',
-					},
-				],
-			},
-			{
-				displayName: 'Lấy Toàn Bộ',
-				name: 'returnAll',
-				type: 'boolean',
-				default: false,
-				description: 'Lấy toàn bộ kết quả hoặc giới hạn theo số lượng',
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
-					},
-				},
-			},
-			{
-				displayName: 'Giới Hạn',
-				name: 'limit',
-				type: 'number',
-				default: 50,
-				description: 'Số lượng kết quả tối đa cần lấy',
-				typeOptions: {
-					minValue: 1,
-				},
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
-						returnAll: [false],
-					},
-				},
-			},
-			{
-				displayName: 'Bộ Lọc',
-				name: 'filters',
-				type: 'collection',
-				placeholder: 'Thêm Bộ Lọc',
-				default: {},
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
-					},
-				},
-				options: [
-					{
-						displayName: 'Trạng Thái',
-						name: 'status',
-						type: 'options',
-						options: [
-							{
-								name: 'Nháp',
-								value: 'Draft',
-							},
-							{
-								name: 'Đang Xử Lý',
-								value: 'InProgress',
-							},
-							{
-								name: 'Hoàn Tất',
-								value: 'Completed',
-							},
-							{
-								name: 'Đã Hủy',
-								value: 'Canceled',
-							},
-						],
-						default: 'InProgress',
-						description: 'Trạng thái hóa đơn cần lấy',
-					},
-					{
-						displayName: 'ID Khách Hàng',
-						name: 'customerId',
-						type: 'string',
-						default: '',
-						description: 'Lọc hóa đơn theo ID khách hàng',
-					},
-					{
-						displayName: 'Tạo Từ Ngày',
-						name: 'createdFrom',
-						type: 'string',
-						default: '',
-						description: 'Lọc hóa đơn tạo từ ngày (YYYY-MM-DD)',
-					},
-					{
-						displayName: 'Tạo Đến Ngày',
-						name: 'createdTo',
-						type: 'string',
-						default: '',
-						description: 'Lọc hóa đơn tạo đến ngày (YYYY-MM-DD)',
+						description: 'Số tiền khách hàng thanh toán',
 					},
 				],
 			},
@@ -344,31 +345,30 @@ export class KiotVietInvoice implements INodeType {
 
 		for (let i = 0; i < items.length; i++) {
 			try {
-				const invoiceApi = (await kiotViet.invoices()) as unknown as InvoiceHandler;
+				const sdkInvoiceApi = await kiotViet.invoices();
+				const invoiceApi = sdkInvoiceApi as unknown as InvoiceHandler;
 				let responseData: IDataObject = {};
 
 				if (operation === 'create') {
 					const branchId = parseInt(this.getNodeParameter('branchId', i) as string);
-					const invoiceProductsData = this.getNodeParameter(
-						'invoiceProducts.products',
+					const invoiceDetailsData = this.getNodeParameter(
+						'invoiceDetails.products',
 						i,
 						[],
 					) as IDataObject[];
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const invoiceDetails: InvoiceDetail[] = invoiceProductsData.map((product) => ({
-						productId: parseInt(product.productId as string),
-						productCode: '', // Will be filled by API
-						productName: '', // Will be filled by API
-						quantity: product.quantity as number,
-						price: product.price as number,
-						discount: product.discount as number,
-						note: product.note as string,
-					}));
-
 					const invoiceData: InvoiceCreateParams = {
 						branchId,
-						invoiceDetails,
+						invoiceDetails: invoiceDetailsData.map((product) => ({
+							productId: parseInt(product.productId as string),
+							productCode: '',
+							productName: '',
+							quantity: product.quantity as number,
+							price: product.price as number,
+							discount: product.discount as number,
+							note: product.note as string,
+						})),
 						...additionalFields,
 					};
 
@@ -376,24 +376,57 @@ export class KiotVietInvoice implements INodeType {
 						invoiceData.customerId = parseInt(additionalFields.customerId as string);
 					}
 
-					responseData = await invoiceApi.create(invoiceData);
+					const response = await invoiceApi.create(invoiceData);
+					responseData = response as unknown as IDataObject;
 				} else if (operation === 'get') {
 					const invoiceId = parseInt(this.getNodeParameter('invoiceId', i) as string);
-					responseData = await invoiceApi.getById(invoiceId);
+					const response = await invoiceApi.getById(invoiceId);
+					responseData = response as unknown as IDataObject;
 				} else if (operation === 'getAll') {
 					const returnAll = this.getNodeParameter('returnAll', i) as boolean;
 					const filters = this.getNodeParameter('filters', i) as IDataObject;
+					let allResults: Invoice[] = [];
 
-					const qs: IDataObject = {
-						...filters,
-					};
-
-					if (!returnAll) {
+					if (!returnAll && !filters.pageSize) {
 						const limit = this.getNodeParameter('limit', i) as number;
-						qs.pageSize = limit;
+						filters.pageSize = limit;
 					}
 
-					responseData = await invoiceApi.list(qs);
+					if (returnAll) {
+						let hasMore = true;
+						let currentPage = 1;
+
+						while (hasMore) {
+							filters.currentPage = currentPage;
+							const response = await invoiceApi.list(filters);
+							const listResponse = response as unknown as KiotVietListResponse<Invoice>;
+							if (listResponse.data && listResponse.data.length > 0) {
+								allResults = allResults.concat(listResponse.data);
+								currentPage++;
+								if (currentPage * (filters.pageSize as number) >= listResponse.total) {
+									hasMore = false;
+								}
+							} else {
+								hasMore = false;
+							}
+						}
+
+						responseData = {
+							data: allResults,
+							total: allResults.length,
+							pageSize: filters.pageSize,
+							currentPage: filters.currentPage,
+						};
+					} else {
+						const response = await invoiceApi.list(filters);
+						const listResponse = response as unknown as KiotVietListResponse<Invoice>;
+						responseData = {
+							data: listResponse.data ?? [],
+							total: listResponse.total,
+							pageSize: filters.pageSize,
+							currentPage: filters.currentPage,
+						};
+					}
 				} else if (operation === 'update') {
 					if (!invoiceApi.update) {
 						throw new NodeOperationError(
@@ -403,34 +436,29 @@ export class KiotVietInvoice implements INodeType {
 					}
 
 					const invoiceId = parseInt(this.getNodeParameter('invoiceId', i) as string);
-					const invoiceProductsData = this.getNodeParameter(
-						'invoiceProducts.products',
+					const invoiceDetailsData = this.getNodeParameter(
+						'invoiceDetails.products',
 						i,
 						[],
 					) as IDataObject[];
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const invoiceDetails: InvoiceDetail[] = invoiceProductsData.map((product) => ({
-						productId: parseInt(product.productId as string),
-						productCode: '', // Will be filled by API
-						productName: '', // Will be filled by API
-						quantity: product.quantity as number,
-						price: product.price as number,
-						discount: product.discount as number,
-						note: product.note as string,
-					}));
-
 					const invoiceData: InvoiceUpdateParams = {
 						id: invoiceId,
-						invoiceDetails,
+						invoiceDetails: invoiceDetailsData.map((product) => ({
+							productId: parseInt(product.productId as string),
+							productCode: '',
+							productName: '',
+							quantity: product.quantity as number,
+							price: product.price as number,
+							discount: product.discount as number,
+							note: product.note as string,
+						})),
 						...additionalFields,
 					};
 
-					if (additionalFields.customerId) {
-						invoiceData.customerId = parseInt(additionalFields.customerId as string);
-					}
-
-					responseData = await invoiceApi.update(invoiceId, invoiceData);
+					const response = await invoiceApi.update(invoiceId, invoiceData);
+					responseData = response as unknown as IDataObject;
 				} else if (operation === 'cancel') {
 					if (!invoiceApi.cancel) {
 						throw new NodeOperationError(
@@ -440,9 +468,8 @@ export class KiotVietInvoice implements INodeType {
 					}
 
 					const invoiceId = parseInt(this.getNodeParameter('invoiceId', i) as string);
-					const cancelReason = this.getNodeParameter('cancelReason', i) as string;
-
-					responseData = await invoiceApi.cancel(invoiceId, cancelReason);
+					const response = await invoiceApi.cancel(invoiceId);
+					responseData = response as unknown as IDataObject;
 				}
 
 				const executionData = this.helpers.constructExecutionMetaData(

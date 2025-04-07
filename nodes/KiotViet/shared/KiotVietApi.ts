@@ -1,22 +1,49 @@
 import type {
 	IExecuteFunctions,
 	ILoadOptionsFunctions,
+	IHookFunctions,
+	IWebhookFunctions,
 	IDataObject,
 	JsonObject,
 	ICredentialDataDecryptedObject,
+	IHttpRequestOptions,
 } from 'n8n-workflow';
 import { NodeApiError } from 'n8n-workflow';
 import { KiotVietClient } from 'kiotviet-client-sdk';
+
+import type { Webhook, WebhookCreateParams } from './KiotVietTypes';
 
 export class KiotVietApiBase {
 	private client!: KiotVietClient;
 
 	constructor(
-		private readonly thisArg: IExecuteFunctions | ILoadOptionsFunctions,
+		private readonly thisArg:
+			| IExecuteFunctions
+			| ILoadOptionsFunctions
+			| IHookFunctions
+			| IWebhookFunctions,
 		private readonly options: {
 			includeCredentials?: boolean;
 		} = {},
 	) {}
+
+	// HTTP request helper
+	private async httpRequest(options: IHttpRequestOptions): Promise<any> {
+		const credentials = await this.initializeCredentials();
+		const baseURL = `https://public.kiotapi.com/${credentials.retailerName}`;
+
+		const response = await this.thisArg.helpers.request({
+			...options,
+			url: `${baseURL}${options.url}`,
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${credentials.accessToken}`,
+				...options.headers,
+			},
+		});
+
+		return response;
+	}
 
 	async init(): Promise<void> {
 		await this.initializeClient();
@@ -134,5 +161,30 @@ export class KiotVietApiBase {
 			return { status: qs.status };
 		}
 		return {};
+	}
+
+	// Webhook methods
+	async getWebhooks(): Promise<Webhook[]> {
+		const response = await this.httpRequest({
+			method: 'GET',
+			url: '/webhooks',
+		});
+		return response.data as Webhook[];
+	}
+
+	async createWebhook(params: WebhookCreateParams): Promise<Webhook> {
+		const response = await this.httpRequest({
+			method: 'POST',
+			url: '/webhooks',
+			body: params,
+		});
+		return response.data as Webhook;
+	}
+
+	async deleteWebhook(webhookId: string): Promise<void> {
+		await this.httpRequest({
+			method: 'DELETE',
+			url: `/webhooks/${webhookId}`,
+		});
 	}
 }
