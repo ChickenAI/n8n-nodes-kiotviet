@@ -1,90 +1,75 @@
 {
-  "name": "n8n-nodes-kiotviet",
-  "version": "0.1.2",
-  "description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, and invoices management",
-  "keywords": [
-    "n8n-community-node-package",
-    "kiotviet",
-    "retail",
-    "pos",
-    "ecommerce",
-    "invoice"
-  ],
-  "license": "MIT",
-  "homepage": "https://github.com/doivjpxx/n8n-nodes-kiotviet#readme",
-  "author": {
-    "name": "Phong Hy",
-    "email": "doivjpxx@gmail.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/doivjpxx/n8n-nodes-kiotviet.git"
-  },
-  "bugs": {
-    "url": "https://github.com/doivjpxx/n8n-nodes-kiotviet/issues"
-  },
-  "engines": {
-    "node": ">=18.10",
-    "pnpm": ">=9.1"
-  },
-  "packageManager": "pnpm@9.1.4",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc && gulp build:icons",
-    "clean": "rimraf dist",
-    "dev": "tsc --watch",
-    "format": "prettier nodes credentials --write",
-    "lint": "eslint nodes credentials package.json",
-    "lintfix": "eslint nodes credentials package.json --fix",
-    "prepublishOnly": "pnpm build"
-  },
-  "files": [
-    "dist"
-  ],
-  "n8n": {
-    "n8nNodesApiVersion": 1,
-    "nodes": [
-      {
-        "name": "KiotViet Product",
-        "path": "dist/nodes/KiotViet/Product/KiotVietProduct.node.js"
-      },
-      {
-        "name": "KiotViet Customer",
-        "path": "dist/nodes/KiotViet/Customer/KiotVietCustomer.node.js"
-      },
-      {
-        "name": "KiotViet Order",
-        "path": "dist/nodes/KiotViet/Order/KiotVietOrder.node.js"
-      },
-      {
-        "name": "KiotViet Invoice",
-        "path": "dist/nodes/KiotViet/Invoice/KiotVietInvoice.node.js"
-      }
-    ],
-    "credentials": [
-      {
-        "name": "KiotViet API",
-        "path": "dist/credentials/KiotVietApi.credentials.js"
-      }
-    ]
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.30",
-    "@typescript-eslint/parser": "^7.15.0",
-    "eslint": "^8.56.0",
-    "eslint-plugin-n8n-nodes-base": "^1.16.1",
-    "gulp": "^4.0.2",
-    "prettier": "^3.3.2",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.5.3"
-  },
-  "dependencies": {
-    "kiotviet-client-sdk": "^0.3.0"
-  },
-  "peerDependencies": {
-    "n8n-workflow": ">=1.0.0",
-    "n8n-core": ">=1.0.0"
-  }
+	"name": "n8n-nodes-kiotviet",
+	"version": "0.1.2",
+	"description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, and invoices management",
+	"keywords": [
+		"n8n-community-node-package",
+		"kiotviet",
+		"retail",
+		"pos",
+		"ecommerce",
+		"invoice"
+	],
+	"license": "MIT",
+	"homepage": "https://github.com/doivjpxx/n8n-nodes-kiotviet#readme",
+	"author": {
+		"name": "Phong Hy",
+		"email": "doivjpxx@gmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/doivjpxx/n8n-nodes-kiotviet.git"
+	},
+	"bugs": {
+		"url": "https://github.com/doivjpxx/n8n-nodes-kiotviet/issues"
+	},
+	"engines": {
+		"node": ">=18.10",
+		"pnpm": ">=9.1"
+	},
+	"packageManager": "pnpm@9.1.4",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc && gulp build:icons",
+		"clean": "rimraf dist",
+		"dev": "tsc --watch",
+		"format": "prettier nodes credentials --write",
+		"lint": "eslint nodes credentials package.json",
+		"lintfix": "eslint nodes credentials package.json --fix",
+		"prepublishOnly": "pnpm build"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"nodes": [
+			"dist/nodes/KiotViet/Product/KiotVietProduct.node.js",
+			"dist/nodes/KiotViet/Customer/KiotVietCustomer.node.js",
+			"dist/nodes/KiotViet/Order/KiotVietOrder.node.js",
+			"dist/nodes/KiotViet/Invoice/KiotVietInvoice.node.js"
+		],
+		"credentials": [
+			"dist/credentials/KiotVietApi.credentials.js"
+		]
+	},
+	"devDependencies": {
+		"@types/node": "^20.11.30",
+		"@typescript-eslint/parser": "^7.15.0",
+		"eslint": "^8.56.0",
+		"eslint-plugin-n8n-nodes-base": "^1.16.1",
+		"gulp": "^4.0.2",
+		"prettier": "^3.3.2",
+		"rimraf": "^5.0.5",
+		"typescript": "^5.5.3"
+	},
+	"dependencies": {
+		"kiotviet-client-sdk": "^0.3.0"
+	},
+	"peerDependencies": {
+		"n8n-workflow": ">=1.0.0",
+		"n8n-core": ">=1.0.0"
+	}
 }
