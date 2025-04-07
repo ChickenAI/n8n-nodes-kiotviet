@@ -76,6 +76,34 @@ export class KiotVietOrder implements INodeType {
 				default: 'getAll',
 			},
 			{
+				displayName: 'Trả Về Tất Cả',
+				name: 'returnAll',
+				type: 'boolean',
+				default: false,
+				description: 'Trả về tất cả kết quả',
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
+					},
+				},
+			},
+			{
+				displayName: 'Giới Hạn',
+				name: 'limit',
+				type: 'number',
+				default: 50,
+				description: 'Số lượng đơn hàng tối đa trả về',
+				typeOptions: {
+					minValue: 1,
+				},
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
+						returnAll: [false],
+					},
+				},
+			},
+			{
 				displayName: 'ID Đơn Hàng',
 				name: 'orderId',
 				type: 'string',
@@ -113,6 +141,7 @@ export class KiotVietOrder implements INodeType {
 				},
 				description: 'Mã chi nhánh nơi tạo đơn hàng',
 			},
+			{},
 			{
 				displayName: 'Sản Phẩm Trong Đơn',
 				name: 'orderProducts',
@@ -176,6 +205,76 @@ export class KiotVietOrder implements INodeType {
 				description: 'Danh sách sản phẩm trong đơn hàng',
 			},
 			{
+				displayName: 'Bộ Lọc',
+				name: 'filters',
+				type: 'collection',
+				placeholder: 'Thêm Bộ Lọc',
+				default: {},
+				displayOptions: {
+					show: {
+						operation: ['getAll'],
+					},
+				},
+				options: [
+					{
+						displayName: 'Trang',
+						name: 'pageSize',
+						type: 'number',
+						default: 20,
+						description: 'Số lượng kết quả mỗi trang',
+					},
+					{
+						displayName: 'Số Trang',
+						name: 'currentPage',
+						type: 'number',
+						default: 1,
+						description: 'Số trang hiện tại',
+					},
+					{
+						displayName: 'ID Chi Nhánh',
+						name: 'branchId',
+						type: 'string',
+						default: '',
+						description: 'Lọc theo ID chi nhánh',
+					},
+					{
+						displayName: 'Từ Ngày',
+						name: 'fromDate',
+						type: 'string',
+						default: '',
+						description: 'Lọc từ ngày (định dạng YYYY-MM-DD)',
+					},
+					{
+						displayName: 'Đến Ngày',
+						name: 'toDate',
+						type: 'string',
+						default: '',
+						description: 'Lọc đến ngày (định dạng YYYY-MM-DD)',
+					},
+					{
+						displayName: 'Trạng Thái',
+						name: 'status',
+						type: 'options',
+						options: [
+							{
+								name: 'Hoàn Thành',
+								value: 'Completed',
+							},
+							{
+								name: 'Đã Hủy',
+								value: 'Cancelled',
+							},
+							{
+								name: 'Đang Xử Lý',
+								value: 'Processing',
+							},
+						],
+						default: 'Processing',
+						description: 'Lọc theo trạng thái đơn hàng',
+					},
+				],
+			},
+			{
 				displayName: 'Trường Bổ Sung',
 				name: 'additionalFields',
 				type: 'collection',
@@ -210,7 +309,7 @@ export class KiotVietOrder implements INodeType {
 					},
 				],
 			},
-		],
+		] as INodeTypeDescription['properties'],
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -263,18 +362,46 @@ export class KiotVietOrder implements INodeType {
 				} else if (operation === 'getAll') {
 					const returnAll = this.getNodeParameter('returnAll', i) as boolean;
 					const filters = this.getNodeParameter('filters', i) as IDataObject;
+					let allResults: Order[] = [];
 
-					const qs: IDataObject = {
-						...filters,
-					};
-
-					if (!returnAll) {
+					if (!returnAll && !filters.pageSize) {
 						const limit = this.getNodeParameter('limit', i) as number;
-						qs.pageSize = limit;
+						filters.pageSize = limit;
 					}
 
-					const response = await orderApi.list(qs);
-					responseData = response as unknown as IDataObject;
+					if (returnAll) {
+						let hasMore = true;
+						let currentPage = 1;
+
+						while (hasMore) {
+							filters.currentPage = currentPage;
+							const response = await orderApi.list(filters);
+							const listResponse = response as unknown as KiotVietListResponse<Order>;
+							if (listResponse.data && listResponse.data.length > 0) {
+								allResults = allResults.concat(listResponse.data);
+								currentPage++;
+								if (currentPage * (filters.pageSize as number) >= listResponse.total) {
+									hasMore = false;
+								}
+							} else {
+								hasMore = false;
+							}
+						}
+
+						responseData = {
+							data: allResults,
+							total: allResults.length,
+							pageSize: filters.pageSize,
+						};
+					} else {
+						const response = await orderApi.list(filters);
+						const listResponse = response as unknown as KiotVietListResponse<Order>;
+						responseData = {
+							data: listResponse.data ?? [],
+							total: listResponse.total,
+							pageSize: filters.pageSize,
+						};
+					}
 				} else if (operation === 'update') {
 					if (!orderApi.update) {
 						throw new NodeOperationError(
