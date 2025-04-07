@@ -39,22 +39,22 @@ export class KiotVietApi implements ICredentialType {
 		},
 	];
 
-	authenticate: IAuthenticateGeneric = {
-		type: 'generic',
-		properties: {
-			headers: {
-				'Content-Type': 'application/json',
-				Retailer: '={{$credentials.retailerName}}',
-				Authorization: '=Bearer {{$credentials.accessToken}}',
-			},
-		},
-	};
+	// Remove authenticate section since SDK handles OAuth flow internally
+	// The SDK will manage tokens and authentication automatically
 
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: 'https://public.kiotapi.com',
-			url: '/categories',
-			method: 'GET',
+			baseURL: 'https://id.kiotviet.vn',
+			url: '/connect/token',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: {
+				grant_type: 'client_credentials',
+				client_id: '={{$credentials.clientId}}',
+				client_secret: '={{$credentials.clientSecret}}',
+			},
 		},
 	};
 }
