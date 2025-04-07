@@ -1,19 +1,23 @@
 {
-  "name": "n8n-nodes-<...>",
+  "name": "n8n-nodes-kiotviet",
   "version": "0.1.0",
-  "description": "",
+  "description": "n8n integration package for KiotViet retail management system - supporting products, customers, and orders management",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "kiotviet",
+    "retail",
+    "pos",
+    "ecommerce"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/doivjpxx/n8n-nodes-kiotviet#readme",
   "author": {
-    "name": "",
-    "email": ""
+    "name": "David Do",
+    "email": "doivjpxx@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/doivjpxx/n8n-nodes-kiotviet.git"
   },
   "engines": {
     "node": ">=18.10",
@@ -36,21 +40,25 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/KiotVietApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/KiotViet/Product/Product.node.js",
+      "dist/nodes/KiotViet/Order/Order.node.js",
+      "dist/nodes/KiotViet/Customer/Customer.node.js"
     ]
   },
   "devDependencies": {
+    "@types/node": "^22.14.0",
     "@typescript-eslint/parser": "^7.15.0",
     "eslint": "^8.56.0",
     "eslint-plugin-n8n-nodes-base": "^1.16.1",
     "gulp": "^4.0.2",
     "prettier": "^3.3.2",
     "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "kiotviet-client-sdk": "^0.3.0"
   },
   "peerDependencies": {
     "n8n-workflow": "*"
