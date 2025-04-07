@@ -16,251 +16,251 @@ import type {
 type ProductResponse = Product | KiotVietListResponse<Product> | OperationResult;
 
 export class KiotVietProduct implements INodeType {
-	description: INodeTypeDescription = {
-		displayName: 'KiotViet Product',
-		name: 'kiotVietProduct',
-		icon: 'file:kiotviet.svg',
-		group: ['transform'],
-		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Manage KiotViet products',
-		defaults: {
-			name: 'KiotViet Product',
-		},
-		inputs: ['main'],
-		outputs: ['main'],
-		credentials: [
-			{
-				name: 'kiotVietApi',
-				required: true,
+		description: INodeTypeDescription = {
+			displayName: 'KiotViet Product',
+			name: 'kiotVietProduct',
+			icon: 'file:shared/kiotviet.svg',
+			group: ['transform'],
+			version: 1,
+			subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+			description: 'Manage KiotViet products',
+			defaults: {
+				name: 'KiotViet Product',
 			},
-		],
-		properties: [
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				noDataExpression: true,
-				options: [
-					{
-						name: 'Create',
-						value: 'create',
-						description: 'Create a new product',
-						action: 'Create a product',
+			inputs: ['main'],
+			outputs: ['main'],
+			credentials: [
+				{
+					name: 'kiotVietApi',
+					required: true,
+				},
+			],
+			properties: [
+				{
+					displayName: 'Operation',
+					name: 'operation',
+					type: 'options',
+					noDataExpression: true,
+					options: [
+						{
+							name: 'Create',
+							value: 'create',
+							description: 'Create a new product',
+							action: 'Create a product',
+						},
+						{
+							name: 'Delete',
+							value: 'delete',
+							description: 'Delete a product',
+							action: 'Delete a product',
+						},
+						{
+							name: 'Get',
+							value: 'get',
+							description: 'Get a product by ID',
+							action: 'Get a product',
+						},
+						{
+							name: 'Get Many',
+							value: 'getAll',
+							description: 'Get many products',
+							action: 'Get many products',
+						},
+						{
+							name: 'Update',
+							value: 'update',
+							description: 'Update a product',
+							action: 'Update a product',
+						},
+					],
+					default: 'getAll',
+				},
+				// Fields for Get operation
+				{
+					displayName: 'Product ID',
+					name: 'productId',
+					type: 'string',
+					required: true,
+					default: '',
+					displayOptions: {
+						show: {
+							operation: ['get', 'update', 'delete'],
+						},
 					},
-					{
-						name: 'Delete',
-						value: 'delete',
-						description: 'Delete a product',
-						action: 'Delete a product',
-					},
-					{
-						name: 'Get',
-						value: 'get',
-						description: 'Get a product by ID',
-						action: 'Get a product',
-					},
-					{
-						name: 'Get Many',
-						value: 'getAll',
-						description: 'Get many products',
-						action: 'Get many products',
-					},
-					{
-						name: 'Update',
-						value: 'update',
-						description: 'Update a product',
-						action: 'Update a product',
-					},
-				],
-				default: 'getAll',
-			},
-			// Fields for Get operation
-			{
-				displayName: 'Product ID',
-				name: 'productId',
-				type: 'string',
-				required: true,
-				default: '',
-				displayOptions: {
-					show: {
-						operation: ['get', 'update', 'delete'],
+					description: 'The ID of the product',
+				},
+				// Fields for Get Many operation
+				{
+					displayName: 'Return All',
+					name: 'returnAll',
+					type: 'boolean',
+					default: false,
+					description: 'Whether to return all results or only up to a given limit',
+					displayOptions: {
+						show: {
+							operation: ['getAll'],
+						},
 					},
 				},
-				description: 'The ID of the product',
-			},
-			// Fields for Get Many operation
-			{
-				displayName: 'Return All',
-				name: 'returnAll',
-				type: 'boolean',
-				default: false,
-				description: 'Whether to return all results or only up to a given limit',
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
+				{
+					displayName: 'Limit',
+					name: 'limit',
+					type: 'number',
+					default: 50,
+					description: 'Max number of results to return',
+					typeOptions: {
+						minValue: 1,
+					},
+					displayOptions: {
+						show: {
+							operation: ['getAll'],
+							returnAll: [false],
+						},
 					},
 				},
-			},
-			{
-				displayName: 'Limit',
-				name: 'limit',
-				type: 'number',
-				default: 50,
-				description: 'Max number of results to return',
-				typeOptions: {
-					minValue: 1,
+				// Fields for Create/Update operations
+				{
+					displayName: 'Product Name',
+					name: 'name',
+					type: 'string',
+					default: '',
+					required: true,
+					displayOptions: {
+						show: {
+							operation: ['create', 'update'],
+						},
+					},
+					description: 'Name of the product',
 				},
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
-						returnAll: [false],
+				{
+					displayName: 'Category ID',
+					name: 'categoryId',
+					type: 'string',
+					default: '',
+					required: true,
+					displayOptions: {
+						show: {
+							operation: ['create'],
+						},
 					},
+					description: 'ID of the category this product belongs to',
 				},
-			},
-			// Fields for Create/Update operations
-			{
-				displayName: 'Product Name',
-				name: 'name',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						operation: ['create', 'update'],
+				{
+					displayName: 'Base Price',
+					name: 'basePrice',
+					type: 'number',
+					default: 0,
+					required: true,
+					displayOptions: {
+						show: {
+							operation: ['create'],
+						},
 					},
+					description: 'Base price of the product',
 				},
-				description: 'Name of the product',
-			},
-			{
-				displayName: 'Category ID',
-				name: 'categoryId',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						operation: ['create'],
+				{
+					displayName: 'Retail Price',
+					name: 'retailPrice',
+					type: 'number',
+					default: 0,
+					required: true,
+					displayOptions: {
+						show: {
+							operation: ['create'],
+						},
 					},
+					description: 'Retail price of the product',
 				},
-				description: 'ID of the category this product belongs to',
-			},
-			{
-				displayName: 'Base Price',
-				name: 'basePrice',
-				type: 'number',
-				default: 0,
-				required: true,
-				displayOptions: {
-					show: {
-						operation: ['create'],
+				{
+					displayName: 'Additional Fields',
+					name: 'additionalFields',
+					type: 'collection',
+					placeholder: 'Add Field',
+					default: {},
+					displayOptions: {
+						show: {
+							operation: ['create', 'update'],
+						},
 					},
+					options: [
+						{
+							displayName: 'Code',
+							name: 'code',
+							type: 'string',
+							default: '',
+							description: 'Product code',
+						},
+						{
+							displayName: 'Description',
+							name: 'description',
+							type: 'string',
+							default: '',
+							description: 'Product description',
+						},
+						{
+							displayName: 'Unit',
+							name: 'unit',
+							type: 'string',
+							default: '',
+							description: 'Product unit',
+						},
+						{
+							displayName: 'Allow Sale',
+							name: 'allowsSale',
+							type: 'boolean',
+							default: true,
+							description: 'Whether the product can be sold',
+						},
+					],
 				},
-				description: 'Base price of the product',
-			},
-			{
-				displayName: 'Retail Price',
-				name: 'retailPrice',
-				type: 'number',
-				default: 0,
-				required: true,
-				displayOptions: {
-					show: {
-						operation: ['create'],
+				// Fields for filtering Get Many operation
+				{
+					displayName: 'Filters',
+					name: 'filters',
+					type: 'collection',
+					placeholder: 'Add Filter',
+					default: {},
+					displayOptions: {
+						show: {
+							operation: ['getAll'],
+						},
 					},
+					options: [
+						{
+							displayName: 'Category ID',
+							name: 'categoryId',
+							type: 'string',
+							default: '',
+							description: 'Filter products by category ID',
+						},
+						{
+							displayName: 'Search Term',
+							name: 'searchTerm',
+							type: 'string',
+							default: '',
+							description: 'Search products by name or code',
+						},
+						{
+							displayName: 'Status',
+							name: 'status',
+							type: 'options',
+							options: [
+								{
+									name: 'Active',
+									value: 'Active',
+								},
+								{
+									name: 'Inactive',
+									value: 'Inactive',
+								},
+							],
+							default: 'Active',
+							description: 'Filter products by status',
+						},
+					],
 				},
-				description: 'Retail price of the product',
-			},
-			{
-				displayName: 'Additional Fields',
-				name: 'additionalFields',
-				type: 'collection',
-				placeholder: 'Add Field',
-				default: {},
-				displayOptions: {
-					show: {
-						operation: ['create', 'update'],
-					},
-				},
-				options: [
-					{
-						displayName: 'Code',
-						name: 'code',
-						type: 'string',
-						default: '',
-						description: 'Product code',
-					},
-					{
-						displayName: 'Description',
-						name: 'description',
-						type: 'string',
-						default: '',
-						description: 'Product description',
-					},
-					{
-						displayName: 'Unit',
-						name: 'unit',
-						type: 'string',
-						default: '',
-						description: 'Product unit',
-					},
-					{
-						displayName: 'Allow Sale',
-						name: 'allowsSale',
-						type: 'boolean',
-						default: true,
-						description: 'Whether the product can be sold',
-					},
-				],
-			},
-			// Fields for filtering Get Many operation
-			{
-				displayName: 'Filters',
-				name: 'filters',
-				type: 'collection',
-				placeholder: 'Add Filter',
-				default: {},
-				displayOptions: {
-					show: {
-						operation: ['getAll'],
-					},
-				},
-				options: [
-					{
-						displayName: 'Category ID',
-						name: 'categoryId',
-						type: 'string',
-						default: '',
-						description: 'Filter products by category ID',
-					},
-					{
-						displayName: 'Search Term',
-						name: 'searchTerm',
-						type: 'string',
-						default: '',
-						description: 'Search products by name or code',
-					},
-					{
-						displayName: 'Status',
-						name: 'status',
-						type: 'options',
-						options: [
-							{
-								name: 'Active',
-								value: 'Active',
-							},
-							{
-								name: 'Inactive',
-								value: 'Inactive',
-							},
-						],
-						default: 'Active',
-						description: 'Filter products by status',
-					},
-				],
-			},
-		],
-	};
+			],
+		};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
