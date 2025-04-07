@@ -231,7 +231,7 @@ export class KiotVietCustomer implements INodeType {
 				const sdkCustomerApi = await kiotViet.customers();
 				const customerApi = sdkCustomerApi as unknown as CustomerHandler;
 
-				let responseData: IDataObject = {};
+				let responseData: IDataObject | Customer | Customer[] = {};
 
 				if (operation === 'create') {
 					const name = this.getNodeParameter('name', i) as string;
@@ -249,27 +249,64 @@ export class KiotVietCustomer implements INodeType {
 							.filter(Boolean);
 					}
 
-					const response = await customerApi.create(customerData);
-					responseData = response as unknown as IDataObject;
+					responseData = await customerApi.create(customerData);
 				} else if (operation === 'get') {
 					const customerId = parseInt(this.getNodeParameter('customerId', i) as string);
-					const response = await customerApi.getById(customerId);
-					responseData = response as unknown as IDataObject;
+					responseData = await customerApi.getById(customerId);
 				} else if (operation === 'getAll') {
 					const returnAll = this.getNodeParameter('returnAll', i) as boolean;
 					const filters = this.getNodeParameter('filters', i) as IDataObject;
 
-					const qs: IDataObject = {
+					let qs: IDataObject = {
 						...filters,
+						currentItem: 0,
+						pageSize: returnAll ? 100 : (this.getNodeParameter('limit', i) as number),
 					};
 
-					if (!returnAll) {
-						const limit = this.getNodeParameter('limit', i) as number;
-						qs.pageSize = limit;
+					// First request to get total count and first page
+					let response: KiotVietListResponse<Customer>;
+					try {
+						response = (await customerApi.list(qs)) as KiotVietListResponse<Customer>;
+					} catch (error) {
+						throw new NodeOperationError(
+							this.getNode(),
+							`Failed to fetch customers: ${error.message}`,
+						);
 					}
 
-					const response = await customerApi.list(qs);
-					responseData = response as unknown as IDataObject;
+					let results: Customer[] = [...response.data];
+
+					// If we need all results and there are more pages
+					if (returnAll && response.total > response.pageSize) {
+						let currentItem = response.pageSize;
+
+						// Keep fetching until we get all items
+						while (currentItem < response.total) {
+							try {
+								// Add a small delay to avoid rate limits
+								await new Promise((resolve) => setTimeout(resolve, 100));
+
+								qs = {
+									...qs,
+									currentItem,
+								};
+
+								const pageResponse = (await customerApi.list(qs)) as KiotVietListResponse<Customer>;
+								if (!pageResponse.data || pageResponse.data.length === 0) break;
+
+								results = [...results, ...pageResponse.data];
+								currentItem += pageResponse.pageSize;
+							} catch (error) {
+								// Log the error but continue with partial results
+								console.error('Error fetching page:', error);
+								break;
+							}
+						}
+
+						responseData = { data: results };
+					} else {
+						responseData = { data: response.data };
+					}
 				} else if (operation === 'update') {
 					if (!customerApi.update) {
 						throw new NodeOperationError(
@@ -299,8 +336,17 @@ export class KiotVietCustomer implements INodeType {
 					responseData = response as unknown as IDataObject;
 				}
 
+				let returnItem: IDataObject | IDataObject[];
+				if (Array.isArray(responseData)) {
+					returnItem = responseData;
+				} else if (responseData && typeof responseData === 'object') {
+					returnItem = responseData;
+				} else {
+					returnItem = { json: responseData };
+				}
+
 				const executionData = this.helpers.constructExecutionMetaData(
-					this.helpers.returnJsonArray(responseData),
+					this.helpers.returnJsonArray(returnItem),
 					{ itemData: { item: i } },
 				);
 				returnData.push(...executionData);
