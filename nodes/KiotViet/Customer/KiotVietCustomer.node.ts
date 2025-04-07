@@ -303,9 +303,19 @@ export class KiotVietCustomer implements INodeType {
 							}
 						}
 
-						responseData = { data: results };
+						responseData = {
+							data: results,
+							total: response.total,
+							pageSize: response.pageSize,
+							currentItem: currentItem,
+						};
 					} else {
-						responseData = { data: response.data };
+						responseData = {
+							data: response.data,
+							total: response.total,
+							pageSize: response.pageSize,
+							currentItem: response.currentItem,
+						};
 					}
 				} else if (operation === 'update') {
 					if (!customerApi.update) {
