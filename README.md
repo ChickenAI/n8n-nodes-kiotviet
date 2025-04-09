@@ -2,7 +2,7 @@
 
 
 ![KiotViet](./kiotviet-logo.png)
-# n8n-nodes-kiotviet
+# N8N nodes KiotViet cho ngành bán lẻ (Retailer)
 
 Đây là một node cộng đồng n8n cho phép bạn sử dụng KiotViet trong quy trình làm việc n8n của mình.
 
