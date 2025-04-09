@@ -25,7 +25,7 @@ export class KiotVietApiBase {
 		private readonly options: {
 			includeCredentials?: boolean;
 		} = {},
-	) {}
+	) { }
 
 	// HTTP request helper
 	private async httpRequest(options: IHttpRequestOptions): Promise<any> {
@@ -92,6 +92,11 @@ export class KiotVietApiBase {
 	async invoices() {
 		if (!this.client) await this.init();
 		return this.client.invoices;
+	}
+
+	async purchaseOrders() {
+		if (!this.client) await this.init();
+		return this.client.purchaseOrders;
 	}
 
 	// Helper method to handle pagination parameters

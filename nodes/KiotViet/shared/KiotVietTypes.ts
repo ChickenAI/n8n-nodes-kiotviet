@@ -254,6 +254,54 @@ export interface CategoryAttribute {
 	value: string;
 }
 
+// Purchase Order interfaces
+export interface PurchaseOrderCreateParams extends IDataObject {
+	branchId: number;
+	supplierId: number;
+	orderDetails: PurchaseOrderProduct[];
+	description?: string;
+	discount?: number;
+	status?: 'Processing' | 'Completed' | 'Canceled';
+}
+
+export interface PurchaseOrderUpdateParams extends Partial<PurchaseOrderCreateParams> {
+	id: number;
+}
+
+export interface PurchaseOrderProduct {
+	productId: number;
+	productCode: string;
+	productName: string;
+	quantity: number;
+	price: number;
+	discount?: number;
+	note?: string;
+}
+
+export interface PurchaseOrder extends IDataObject {
+	id: number;
+	code: string;
+	branchId: number;
+	supplierId: number;
+	supplierName?: string;
+	discount?: number;
+	description?: string;
+	status: 'Processing' | 'Completed' | 'Canceled';
+	total: number;
+	orderDetails: PurchaseOrderProduct[];
+	createdDate: string;
+	modifiedDate: string;
+}
+
+export interface PurchaseOrderHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<PurchaseOrder>>;
+	create(data: PurchaseOrderCreateParams): Promise<PurchaseOrder>;
+	getById(id: number): Promise<PurchaseOrder>;
+	getByCode(code: string): Promise<PurchaseOrder>;
+	update?: (id: number, data: PurchaseOrderUpdateParams) => Promise<PurchaseOrder>;
+	cancel?: (id: number) => Promise<PurchaseOrder>;
+}
+
 export interface Category extends IDataObject {
 	id: number;
 	categoryName: string;
