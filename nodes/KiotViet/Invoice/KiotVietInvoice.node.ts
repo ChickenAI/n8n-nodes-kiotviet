@@ -55,6 +55,12 @@ export class KiotVietInvoice implements INodeType {
 						action: 'Lấy hóa đơn',
 					},
 					{
+						name: 'Lấy Theo Mã',
+						value: 'getByCode',
+						description: 'Lấy hóa đơn theo mã',
+						action: 'Lấy hóa đơn theo mã',
+					},
+					{
 						name: 'Lấy Nhiều',
 						value: 'getAll',
 						description: 'Lấy danh sách hóa đơn',
@@ -86,7 +92,20 @@ export class KiotVietInvoice implements INodeType {
 						operation: ['get', 'update', 'cancel'],
 					},
 				},
-				description: 'Mã định danh của hóa đơn',
+				description: 'ID của hóa đơn',
+			},
+			{
+				displayName: 'Mã Hóa Đơn',
+				name: 'invoiceCode',
+				type: 'string',
+				required: true,
+				default: '',
+				displayOptions: {
+					show: {
+						operation: ['getByCode'],
+					},
+				},
+				description: 'Mã của hóa đơn',
 			},
 			{
 				displayName: 'ID Chi Nhánh',
@@ -381,6 +400,10 @@ export class KiotVietInvoice implements INodeType {
 				} else if (operation === 'get') {
 					const invoiceId = parseInt(this.getNodeParameter('invoiceId', i) as string);
 					const response = await invoiceApi.getById(invoiceId);
+					responseData = response as unknown as IDataObject;
+				} else if (operation === 'getByCode') {
+					const invoiceCode = this.getNodeParameter('invoiceCode', i) as string;
+					const response = await invoiceApi.getByCode(invoiceCode);
 					responseData = response as unknown as IDataObject;
 				} else if (operation === 'getAll') {
 					const returnAll = this.getNodeParameter('returnAll', i) as boolean;

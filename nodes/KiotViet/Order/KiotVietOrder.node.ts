@@ -61,6 +61,12 @@ export class KiotVietOrder implements INodeType {
 						action: 'Lấy đơn hàng',
 					},
 					{
+						name: 'Lấy Theo Mã',
+						value: 'getByCode',
+						description: 'Lấy đơn hàng theo mã',
+						action: 'Lấy đơn hàng theo mã',
+					},
+					{
 						name: 'Lấy Nhiều',
 						value: 'getAll',
 						description: 'Lấy danh sách đơn hàng',
@@ -114,7 +120,20 @@ export class KiotVietOrder implements INodeType {
 						operation: ['get', 'update', 'cancel'],
 					},
 				},
-				description: 'Mã định danh của đơn hàng',
+				description: 'ID của đơn hàng',
+			},
+			{
+				displayName: 'Mã Đơn Hàng',
+				name: 'orderCode',
+				type: 'string',
+				required: true,
+				default: '',
+				displayOptions: {
+					show: {
+						operation: ['getByCode'],
+					},
+				},
+				description: 'Mã của đơn hàng',
 			},
 			{
 				displayName: 'Lý Do Hủy',
@@ -358,6 +377,10 @@ export class KiotVietOrder implements INodeType {
 				} else if (operation === 'get') {
 					const orderId = parseInt(this.getNodeParameter('orderId', i) as string);
 					const response = await orderApi.getById(orderId);
+					responseData = response as unknown as IDataObject;
+				} else if (operation === 'getByCode') {
+					const orderCode = this.getNodeParameter('orderCode', i) as string;
+					const response = await orderApi.getByCode(orderCode);
 					responseData = response as unknown as IDataObject;
 				} else if (operation === 'getAll') {
 					const returnAll = this.getNodeParameter('returnAll', i) as boolean;

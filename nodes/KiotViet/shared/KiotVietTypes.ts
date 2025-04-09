@@ -26,6 +26,15 @@ export interface ProductUpdateParams extends Partial<ProductCreateParams> {
 	id: number;
 }
 
+export interface ProductHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<Product>>;
+	create(data: ProductCreateParams): Promise<Product>;
+	getById(id: number): Promise<Product>;
+	getByCode(code: string): Promise<Product>;
+	update?: (id: number, data: ProductUpdateParams) => Promise<Product>;
+	delete?: (id: number) => Promise<OperationResult>;
+}
+
 export interface ProductAttribute {
 	attributeName: string;
 	attributeValue: string;
@@ -100,6 +109,7 @@ export interface OrderHandler {
 	list(params?: IDataObject): Promise<KiotVietListResponse<Order>>;
 	create(data: OrderCreateParams): Promise<Order>;
 	getById(id: number): Promise<Order>;
+	getByCode(code: string): Promise<Order>;
 	update?: (id: number, data: OrderUpdateParams) => Promise<Order>;
 	cancel?: (id: number, reason?: string) => Promise<Order>;
 }
@@ -154,6 +164,7 @@ export interface InvoiceHandler {
 	list(params?: IDataObject): Promise<KiotVietListResponse<Invoice>>;
 	create(data: InvoiceCreateParams): Promise<Invoice>;
 	getById(id: number): Promise<Invoice>;
+	getByCode(code: string): Promise<Invoice>;
 	update?: (id: number, data: InvoiceUpdateParams) => Promise<Invoice>;
 	cancel?: (id: number, reason?: string) => Promise<Invoice>;
 }
