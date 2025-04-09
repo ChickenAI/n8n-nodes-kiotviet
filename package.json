@@ -52,7 +52,10 @@
 			"dist/nodes/KiotViet/Order/KiotVietOrder.node.js",
 			"dist/nodes/KiotViet/Invoice/KiotVietInvoice.node.js",
       "dist/nodes/KiotViet/Category/KiotVietCategory.node.js",
-      "dist/nodes/KiotViet/Trigger/KiotVietTrigger.node.js"
+      "dist/nodes/KiotViet/Trigger/KiotVietTrigger.node.js",
+      "dist/nodes/KiotViet/PurchaseOrder/KiotVietPurchaseOrder.node.js",
+      "dist/nodes/KiotViet/Branch/KiotVietBranch.node.js",
+      "dist/nodes/KiotViet/Supplier/KiotVietSupplier.node.js"
 		],
 		"credentials": [
 			"dist/credentials/KiotVietApi.credentials.js"
