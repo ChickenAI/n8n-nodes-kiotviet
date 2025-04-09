@@ -106,6 +106,19 @@ export class KiotVietBranch implements INodeType {
 				description: 'Tên của chi nhánh',
 			},
 			{
+				displayName: 'Địa Chỉ',
+				name: 'address',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						operation: ['create', 'update'],
+					},
+				},
+				description: 'Địa chỉ của chi nhánh',
+			},
+			{
 				displayName: 'Trường Bổ Sung',
 				name: 'additionalFields',
 				type: 'collection',
@@ -118,11 +131,11 @@ export class KiotVietBranch implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Địa Chỉ',
-						name: 'address',
+						displayName: 'Số Điện Thoại',
+						name: 'phoneNumber',
 						type: 'string',
 						default: '',
-						description: 'Địa chỉ chi nhánh',
+						description: 'Số điện thoại chi nhánh',
 					},
 					{
 						displayName: 'Số Điện Thoại',
@@ -207,6 +220,7 @@ export class KiotVietBranch implements INodeType {
 
 					const branchData = {
 						name,
+						address: this.getNodeParameter('address', i) as string,
 						...additionalFields,
 					};
 

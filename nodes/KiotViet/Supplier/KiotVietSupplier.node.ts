@@ -35,18 +35,6 @@ export class KiotVietSupplier implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Tạo Mới',
-						value: 'create',
-						description: 'Tạo nhà cung cấp mới',
-						action: 'Tạo nhà cung cấp',
-					},
-					{
-						name: 'Xóa',
-						value: 'delete',
-						description: 'Xóa nhà cung cấp',
-						action: 'Xóa nhà cung cấp',
-					},
-					{
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy nhà cung cấp theo ID',
@@ -57,12 +45,6 @@ export class KiotVietSupplier implements INodeType {
 						value: 'getAll',
 						description: 'Lấy danh sách nhà cung cấp',
 						action: 'Lấy danh sách nhà cung cấp',
-					},
-					{
-						name: 'Cập Nhật',
-						value: 'update',
-						description: 'Cập nhật nhà cung cấp',
-						action: 'Cập nhật nhà cung cấp',
 					},
 				],
 				default: 'getAll',
@@ -75,7 +57,7 @@ export class KiotVietSupplier implements INodeType {
 				default: '',
 				displayOptions: {
 					show: {
-						operation: ['get', 'update', 'delete'],
+						operation: ['get'],
 					},
 				},
 				description: 'ID của nhà cung cấp',
@@ -107,68 +89,6 @@ export class KiotVietSupplier implements INodeType {
 						returnAll: [false],
 					},
 				},
-			},
-			{
-				displayName: 'Tên Nhà Cung Cấp',
-				name: 'name',
-				type: 'string',
-				default: '',
-				required: true,
-				displayOptions: {
-					show: {
-						operation: ['create', 'update'],
-					},
-				},
-				description: 'Tên của nhà cung cấp',
-			},
-			{
-				displayName: 'Trường Bổ Sung',
-				name: 'additionalFields',
-				type: 'collection',
-				placeholder: 'Thêm Trường',
-				default: {},
-				displayOptions: {
-					show: {
-						operation: ['create', 'update'],
-					},
-				},
-				options: [
-					{
-						displayName: 'Mã Nhà Cung Cấp',
-						name: 'code',
-						type: 'string',
-						default: '',
-						description: 'Mã định danh của nhà cung cấp',
-					},
-					{
-						displayName: 'Số Điện Thoại',
-						name: 'contactNumber',
-						type: 'string',
-						default: '',
-						description: 'Số điện thoại của nhà cung cấp',
-					},
-					{
-						displayName: 'Email',
-						name: 'email',
-						type: 'string',
-						default: '',
-						description: 'Email của nhà cung cấp',
-					},
-					{
-						displayName: 'Địa Chỉ',
-						name: 'address',
-						type: 'string',
-						default: '',
-						description: 'Địa chỉ của nhà cung cấp',
-					},
-					{
-						displayName: 'Ghi Chú',
-						name: 'description',
-						type: 'string',
-						default: '',
-						description: 'Ghi chú về nhà cung cấp',
-					},
-				],
 			},
 			{
 				displayName: 'Bộ Lọc',
@@ -224,17 +144,7 @@ export class KiotVietSupplier implements INodeType {
 				let responseData: any;
 				const supplierApi = await kiotViet.suppliers();
 
-				if (operation === 'create') {
-					const name = this.getNodeParameter('name', i) as string;
-					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
-
-					const supplierData = {
-						name,
-						...additionalFields,
-					};
-
-					responseData = await supplierApi.create(supplierData);
-				} else if (operation === 'get') {
+				if (operation === 'get') {
 					const supplierId = parseInt(this.getNodeParameter('supplierId', i) as string);
 					responseData = await supplierApi.getById(supplierId);
 				} else if (operation === 'getAll') {
@@ -251,21 +161,6 @@ export class KiotVietSupplier implements INodeType {
 					}
 
 					responseData = await supplierApi.list(qs);
-				} else if (operation === 'update') {
-					const supplierId = parseInt(this.getNodeParameter('supplierId', i) as string);
-					const name = this.getNodeParameter('name', i) as string;
-					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
-
-					const supplierData = {
-						name,
-						...additionalFields,
-					};
-
-					responseData = await supplierApi.update(supplierId, supplierData);
-				} else if (operation === 'delete') {
-					const supplierId = parseInt(this.getNodeParameter('supplierId', i) as string);
-					await supplierApi.delete(supplierId);
-					responseData = { success: true };
 				}
 
 				const executionData = this.helpers.constructExecutionMetaData(

@@ -53,12 +53,6 @@ export class KiotVietPurchaseOrder implements INodeType {
 						action: 'Lấy đơn đặt hàng',
 					},
 					{
-						name: 'Lấy Theo Mã',
-						value: 'getByCode',
-						description: 'Lấy đơn đặt hàng theo mã',
-						action: 'Lấy đơn đặt hàng theo mã',
-					},
-					{
 						name: 'Lấy Nhiều',
 						value: 'getAll',
 						description: 'Lấy danh sách đơn đặt hàng',
@@ -85,19 +79,6 @@ export class KiotVietPurchaseOrder implements INodeType {
 					},
 				},
 				description: 'ID của đơn đặt hàng',
-			},
-			{
-				displayName: 'Mã Đơn Đặt Hàng',
-				name: 'purchaseOrderCode',
-				type: 'string',
-				required: true,
-				default: '',
-				displayOptions: {
-					show: {
-						operation: ['getByCode'],
-					},
-				},
-				description: 'Mã của đơn đặt hàng',
 			},
 			{
 				displayName: 'Lấy Toàn Bộ',
@@ -288,6 +269,7 @@ export class KiotVietPurchaseOrder implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				let responseData: any;
+				const purchaseOrdersApi = await kiotViet.purchaseOrders();
 
 				if (operation === 'create') {
 					const branchId = parseInt(this.getNodeParameter('branchId', i) as string);
@@ -295,26 +277,23 @@ export class KiotVietPurchaseOrder implements INodeType {
 					const orderDetailsUi = this.getNodeParameter('orderDetails', i) as IDataObject;
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const orderDetails = (orderDetailsUi.products as IDataObject[]).map((product) => ({
+					const purchaseOrderDetails = (orderDetailsUi.products as IDataObject[]).map((product) => ({
 						productId: parseInt(product.productId as string),
-						quantity: product.quantity,
-						price: product.price,
+						quantity: parseInt(product.quantity as string),
+						price: parseFloat(product.price as string),
 					}));
 
 					const purchaseOrderData = {
 						branchId,
 						supplierId,
-						orderDetails,
+						purchaseOrderDetails,
 						...additionalFields,
 					};
 
-					responseData = await kiotViet.purchaseOrders().create(purchaseOrderData);
+					responseData = await purchaseOrdersApi.create(purchaseOrderData);
 				} else if (operation === 'get') {
 					const purchaseOrderId = parseInt(this.getNodeParameter('purchaseOrderId', i) as string);
-					responseData = await kiotViet.purchaseOrders().getById(purchaseOrderId);
-				} else if (operation === 'getByCode') {
-					const purchaseOrderCode = this.getNodeParameter('purchaseOrderCode', i) as string;
-					responseData = await kiotViet.purchaseOrders().getByCode(purchaseOrderCode);
+					responseData = await purchaseOrdersApi.getById(purchaseOrderId);
 				} else if (operation === 'getAll') {
 					const returnAll = this.getNodeParameter('returnAll', i) as boolean;
 					const filters = this.getNodeParameter('filters', i) as IDataObject;
@@ -328,29 +307,30 @@ export class KiotVietPurchaseOrder implements INodeType {
 						qs.pageSize = limit;
 					}
 
-					responseData = await kiotViet.purchaseOrders().list(qs);
+					responseData = await purchaseOrdersApi.list(qs);
 				} else if (operation === 'update') {
 					const purchaseOrderId = parseInt(this.getNodeParameter('purchaseOrderId', i) as string);
 					const orderDetailsUi = this.getNodeParameter('orderDetails', i) as IDataObject;
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const orderDetails = orderDetailsUi.products
+					const purchaseOrderDetails = orderDetailsUi.products
 						? (orderDetailsUi.products as IDataObject[]).map((product) => ({
 							productId: parseInt(product.productId as string),
-							quantity: product.quantity,
-							price: product.price,
+							quantity: parseInt(product.quantity as string),
+							price: parseFloat(product.price as string),
 						}))
 						: undefined;
 
 					const purchaseOrderData = {
-						...(orderDetails && { orderDetails }),
+						purchaseOrderDetails,
 						...additionalFields,
 					};
 
-					responseData = await kiotViet.purchaseOrders().update(purchaseOrderId, purchaseOrderData);
+					responseData = await purchaseOrdersApi.update(purchaseOrderId, purchaseOrderData);
 				} else if (operation === 'cancel') {
 					const purchaseOrderId = parseInt(this.getNodeParameter('purchaseOrderId', i) as string);
-					responseData = await kiotViet.purchaseOrders().cancel(purchaseOrderId);
+					await purchaseOrdersApi.cancel(purchaseOrderId);
+					responseData = { success: true };
 				}
 
 				const executionData = this.helpers.constructExecutionMetaData(
