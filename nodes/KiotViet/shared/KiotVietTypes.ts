@@ -278,6 +278,79 @@ export interface PurchaseOrderProduct {
 	note?: string;
 }
 
+// Supplier interfaces
+export interface SupplierCreateParams {
+	name: string;
+	code?: string;
+	contactNumber?: string;
+	email?: string;
+	address?: string;
+	description?: string;
+	status?: 'Active' | 'Inactive';
+}
+
+export interface SupplierUpdateParams extends Partial<SupplierCreateParams> {
+	id: number;
+}
+
+export interface Supplier extends IDataObject {
+	id: number;
+	code: string;
+	name: string;
+	contactNumber?: string;
+	email?: string;
+	address?: string;
+	description?: string;
+	status: 'Active' | 'Inactive';
+	debt: number;
+	totalInvoiced: number;
+	createdDate: string;
+	modifiedDate: string;
+}
+
+export interface SupplierHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<Supplier>>;
+	create(data: SupplierCreateParams): Promise<Supplier>;
+	getById(id: number): Promise<Supplier>;
+	update(id: number, data: SupplierUpdateParams): Promise<Supplier>;
+	delete(id: number): Promise<void>;
+}
+
+// Branch interfaces
+export interface BranchCreateParams {
+	name: string;
+	code?: string;
+	address?: string;
+	phoneNumber?: string;
+	description?: string;
+	retailerId?: number;
+	status?: 'Active' | 'Inactive';
+}
+
+export interface BranchUpdateParams extends Partial<BranchCreateParams> {
+	id: number;
+}
+
+export interface Branch extends IDataObject {
+	id: number;
+	code: string;
+	name: string;
+	address?: string;
+	phoneNumber?: string;
+	description?: string;
+	status: 'Active' | 'Inactive';
+	createdDate: string;
+	modifiedDate: string;
+}
+
+export interface BranchHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<Branch>>;
+	create(data: BranchCreateParams): Promise<Branch>;
+	getById(id: number): Promise<Branch>;
+	update?: (id: number, data: BranchUpdateParams) => Promise<Branch>;
+	delete?: (id: number) => Promise<void>;
+}
+
 export interface PurchaseOrder extends IDataObject {
 	id: number;
 	code: string;

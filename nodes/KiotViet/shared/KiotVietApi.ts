@@ -94,6 +94,16 @@ export class KiotVietApiBase {
 		return this.client.invoices;
 	}
 
+	async suppliers() {
+		if (!this.client) await this.init();
+		return this.client.suppliers;
+	}
+
+	async branches() {
+		if (!this.client) await this.init();
+		return this.client.branches;
+	}
+
 	async purchaseOrders() {
 		if (!this.client) await this.init();
 		return this.client.purchaseOrders;
