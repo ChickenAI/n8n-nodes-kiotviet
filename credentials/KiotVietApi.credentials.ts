@@ -43,18 +43,18 @@ export class KiotVietApi implements ICredentialType {
 	// The SDK will manage tokens and authentication automatically
 
 	test: ICredentialTestRequest = {
-	  request: {
-	    baseURL: 'https://id.kiotviet.vn',
-	    url: '/connect/token',
-	    method: 'POST',
-	    headers: {
-	      'Content-Type': 'application/x-www-form-urlencoded',
-	    },
-	    body: {
-	      grant_type: 'client_credentials',
-	      client_id: '={{$credentials.clientId}}',
-	      client_secret: '={{$credentials.clientSecret}}',
-	    },
-	  },
+		request: {
+			baseURL: 'https://id.kiotviet.vn',
+			url: '/connect/token',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: {
+				grant_type: 'client_credentials',
+				client_id: '={{$credentials.clientId}}',
+				client_secret: '={{$credentials.clientSecret}}',
+			},
+		},
 	};
 }

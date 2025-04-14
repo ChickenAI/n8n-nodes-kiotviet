@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-kiotviet",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, and invoices management",
 	"keywords": [
 		"n8n-community-node-package",
@@ -72,7 +72,7 @@
 		"typescript": "^5.5.3"
 	},
 	"dependencies": {
-		"kiotviet-client-sdk": "^0.3.1"
+		"kiotviet-client-sdk": "^0.3.2"
 	},
 	"peerDependencies": {
 		"n8n-core": ">=1.0.0",

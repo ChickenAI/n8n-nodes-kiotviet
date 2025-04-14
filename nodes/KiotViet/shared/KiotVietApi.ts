@@ -25,7 +25,7 @@ export class KiotVietApiBase {
 		private readonly options: {
 			includeCredentials?: boolean;
 		} = {},
-	) { }
+	) {}
 
 	// HTTP request helper
 	private async httpRequest(options: IHttpRequestOptions): Promise<any> {

@@ -277,11 +277,13 @@ export class KiotVietPurchaseOrder implements INodeType {
 					const orderDetailsUi = this.getNodeParameter('orderDetails', i) as IDataObject;
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const purchaseOrderDetails = (orderDetailsUi.products as IDataObject[]).map((product) => ({
-						productId: parseInt(product.productId as string),
-						quantity: parseInt(product.quantity as string),
-						price: parseFloat(product.price as string),
-					}));
+					const purchaseOrderDetails = (orderDetailsUi.products as IDataObject[]).map(
+						(product) => ({
+							productId: parseInt(product.productId as string),
+							quantity: parseInt(product.quantity as string),
+							price: parseFloat(product.price as string),
+						}),
+					);
 
 					const purchaseOrderData = {
 						branchId,
@@ -315,10 +317,10 @@ export class KiotVietPurchaseOrder implements INodeType {
 
 					const purchaseOrderDetails = orderDetailsUi.products
 						? (orderDetailsUi.products as IDataObject[]).map((product) => ({
-							productId: parseInt(product.productId as string),
-							quantity: parseInt(product.quantity as string),
-							price: parseFloat(product.price as string),
-						}))
+								productId: parseInt(product.productId as string),
+								quantity: parseInt(product.quantity as string),
+								price: parseFloat(product.price as string),
+							}))
 						: undefined;
 
 					const purchaseOrderData = {
