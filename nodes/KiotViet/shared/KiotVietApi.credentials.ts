@@ -8,7 +8,7 @@ import type {
 export class KiotVietApi implements ICredentialType {
 	name = 'kiotVietApi';
 	displayName = 'KiotViet API';
-	documentationUrl = 'https://developer.kiotviet.vn/documentation';
+	documentationUrl = 'https://www.kiotviet.vn/huong-dan-su-dung-kiotviet/thiet-lap-nang-cao/thiet-lap-ket-noi-api';
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Retailer Name',
@@ -16,7 +16,7 @@ export class KiotVietApi implements ICredentialType {
 			type: 'string',
 			default: '',
 			required: true,
-			description: 'The name of your KiotViet store',
+			description: 'Tên shop của bạn trên KiotViet',
 		},
 		{
 			displayName: 'Client ID',
@@ -24,7 +24,7 @@ export class KiotVietApi implements ICredentialType {
 			type: 'string',
 			default: '',
 			required: true,
-			description: 'The Client ID obtained from KiotViet Developer Portal',
+			description: 'Mã số ứng dụng (Client ID) được cấp từ KiotViet',
 		},
 		{
 			displayName: 'Client Secret',
@@ -35,7 +35,7 @@ export class KiotVietApi implements ICredentialType {
 			},
 			default: '',
 			required: true,
-			description: 'The Client Secret obtained from KiotViet Developer Portal',
+			description: 'Mã bí mật ứng dụng (Client Secret) được cấp từ KiotViet',
 		},
 	];
 
