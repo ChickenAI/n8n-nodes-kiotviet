@@ -47,32 +47,38 @@ export class KiotVietApiBase {
 
 	// Helper function to perform fetch with retries
 	private async fetchWithRetry(url: string, options: FetchOptions = {}): Promise<Response> {
-		const { maxRetries = this.MAX_RETRIES, retryDelay = this.RETRY_DELAY, ...fetchOptions } = options;
-		
+		const {
+			maxRetries = this.MAX_RETRIES,
+			retryDelay = this.RETRY_DELAY,
+			...fetchOptions
+		} = options;
+
 		let lastError: Error | undefined;
-		
+
 		for (let attempt = 0; attempt <= maxRetries; attempt++) {
 			try {
 				const response = await fetch(url, fetchOptions);
-				
+
 				// Only retry on server errors (5xx) or specific network errors
 				if (response.status >= 500 && response.status < 600 && attempt < maxRetries) {
-					await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
+					await new Promise((resolve) => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
 					continue;
 				}
-				
+
 				return response;
 			} catch (error) {
 				lastError = error as Error;
-				
+
 				// Only retry on network errors
 				if (attempt < maxRetries) {
-					console.log(`Attempt ${attempt + 1}/${maxRetries + 1} failed, retrying in ${retryDelay * Math.pow(2, attempt)}ms...`);
-					await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
+					console.log(
+						`Attempt ${attempt + 1}/${maxRetries + 1} failed, retrying in ${retryDelay * Math.pow(2, attempt)}ms...`,
+					);
+					await new Promise((resolve) => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
 				}
 			}
 		}
-		
+
 		throw lastError || new Error('Failed after maximum retry attempts');
 	}
 
@@ -107,7 +113,7 @@ export class KiotVietApiBase {
 				throw new Error(`KiotViet API responded with status ${tokenResponse.status}: ${errorText}`);
 			}
 
-			const authData = await tokenResponse.json() as KiotVietAuthResponse;
+			const authData = (await tokenResponse.json()) as KiotVietAuthResponse;
 			this.accessToken = authData.access_token;
 			// Lưu thời gian hết hạn (trừ 60 giây để an toàn)
 			this.tokenExpiry = now + (authData.expires_in - 60) * 1000;
@@ -146,7 +152,7 @@ export class KiotVietApiBase {
 				this.accessToken = null;
 				try {
 					const token = await this.getToken(credentials);
-					
+
 					const response = await this.thisArg.helpers.request({
 						...options,
 						url: `${baseURL}${options.url}`,
@@ -157,7 +163,7 @@ export class KiotVietApiBase {
 							...options.headers,
 						},
 					});
-					
+
 					return response;
 				} catch (retryError) {
 					console.error('Error during token refresh and retry:', retryError);
@@ -167,7 +173,7 @@ export class KiotVietApiBase {
 					} as JsonObject);
 				}
 			}
-			
+
 			// Các lỗi khác
 			if (error.statusCode >= 400) {
 				console.error(`KiotViet API error (${error.statusCode}):`, error.message || error);
@@ -177,7 +183,7 @@ export class KiotVietApiBase {
 					httpCode: error.statusCode,
 				} as JsonObject);
 			}
-			
+
 			throw error;
 		}
 	}
@@ -318,10 +324,7 @@ export class KiotVietApiBase {
 	// Webhook methods
 	async getWebhooks(): Promise<Webhook[]> {
 		try {
-			const response = await this.httpRequest({
-				method: 'GET',
-				url: '/webhooks',
-			});
+			const response = await this.client.webhooks.list();
 			return response.data as Webhook[];
 		} catch (error) {
 			console.error('Error fetching webhooks:', error);

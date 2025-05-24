@@ -133,7 +133,7 @@ export class KiotVietTrigger implements INodeType {
 					password: true,
 				},
 				default: '',
-				description: 'Mã bí mật để xác thực webhook từ KiotViet. Nên có ít nhất 8 ký tự.',
+				description: 'Mã bí mật để xác thực webhook từ KiotViet (tự đặt). Nên có ít nhất 8 ký tự.',
 				required: true,
 			},
 			{
@@ -234,15 +234,11 @@ export class KiotVietTrigger implements INodeType {
 				await kiotViet.init();
 
 				try {
-					// Lấy danh sách tất cả webhook đã đăng ký
 					const existingWebhooks = await kiotViet.getWebhooks();
 
-					// Kiểm tra xem existingWebhooks có phải là mảng không trước khi lặp
 					if (Array.isArray(existingWebhooks)) {
-						// Kiểm tra và xóa các webhook trùng lặp (cùng URL và loại sự kiện)
 						for (const existingWebhook of existingWebhooks) {
-							if (existingWebhook.url === webhookUrl) {
-								// Nếu webhook với URL này đã tồn tại, xóa nó trước
+							if (event === existingWebhook.type) {
 								console.log(
 									`Removing existing webhook with ID ${existingWebhook.id} for URL ${webhookUrl}`,
 								);
@@ -250,7 +246,6 @@ export class KiotVietTrigger implements INodeType {
 									await kiotViet.deleteWebhook(existingWebhook.id.toString());
 								} catch (deleteError) {
 									console.error(`Failed to delete existing webhook: ${deleteError.message}`);
-									// Tiếp tục mặc dù có lỗi khi xóa
 								}
 							}
 						}
@@ -258,39 +253,24 @@ export class KiotVietTrigger implements INodeType {
 						console.log('No existing webhooks found or response format is unexpected');
 					}
 
-					// Create webhook payload according to KiotViet API
 					const webhookData: WebhookCreateParams = {
 						Webhook: {
-							Type: event, // KiotViet supports one event type per webhook
+							Type: event,
 							Url: webhookUrl,
 							IsActive: true,
 							Description: description,
-							Secret: Buffer.from(secret).toString('base64'), // Base64 encode the secret for KiotViet API
+							Secret: Buffer.from(secret).toString('base64'),
 						},
 					};
 
-					console.log(webhookData);
 
-					const response = await kiotViet.httpRequest({
-						method: 'POST',
-						url: '/webhooks',
-						body: webhookData,
-					});
+					const response = await kiotViet.createWebhook(webhookData);
 
-					// Lưu thông tin webhook ID và event trong workflow data
-					workflowStaticData.webhookId = response.id;
+					workflowStaticData.webhookId = response?.id ?? Math.floor(Math.random() * 1000000);
 					workflowStaticData.webhookEvent = event;
 
 					return true;
 				} catch (error) {
-					// Kiểm tra nếu lỗi là "Type đã tồn tại"
-					if (error.message && error.message.includes('Type đã tồn tại')) {
-						throw new NodeOperationError(
-							this.getNode(),
-							`Webhook đã tồn tại với cùng loại sự kiện. Vui lòng thử lại sau vài phút hoặc kiểm tra lại các webhook đã đăng ký.`,
-						);
-					}
-
 					throw new NodeOperationError(
 						this.getNode(),
 						`KiotViet webhook creation failed: ${error.message}`,
