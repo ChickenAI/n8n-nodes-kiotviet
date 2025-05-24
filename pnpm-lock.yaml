@@ -12,8 +12,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
       kiotviet-client-sdk:
-        specifier: ^0.3.2
-        version: 0.3.2
+        specifier: ^0.3.4
+        version: 0.3.4
       n8n-core:
         specifier: '>=1.0.0'
         version: 1.14.1(n8n-nodes-base@1.14.1(asn1.js@5.4.1)(promise-ftp-common@1.1.5))
@@ -2584,8 +2584,8 @@ packages:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
 
-  kiotviet-client-sdk@0.3.2:
-    resolution: {integrity: sha512-V5Y7tAaeayBN5HfWd8TgGMuYtA8kUIX6J3JdA4BLNV2L6k8V6490OqCxHi1M5fDUuirTTdzWsXSqgxYUb4a4iw==}
+  kiotviet-client-sdk@0.3.4:
+    resolution: {integrity: sha512-C5YzrwfkO4nDsbtfSrCMITg5TIArS1A/kDXRZ3GpnQh+UGjVDkEtaIgSsqDIiThanMarYUcslUugg633vkXADA==}
     engines: {node: '>=14.0.0'}
 
   kuler@2.0.0:
@@ -5903,7 +5903,7 @@ snapshots:
   axios@1.8.4:
     dependencies:
       follow-redirects: 1.15.6
-      form-data: 4.0.0
+      form-data: 4.0.2
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
@@ -7823,11 +7823,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  kiotviet-client-sdk@0.3.2:
-    dependencies:
-      axios: 1.8.4
-    transitivePeerDependencies:
-      - debug
+  kiotviet-client-sdk@0.3.4: {}
 
   kuler@2.0.0: {}
 
