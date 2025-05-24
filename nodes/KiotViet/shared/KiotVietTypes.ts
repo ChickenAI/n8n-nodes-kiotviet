@@ -219,20 +219,166 @@ export interface OperationResult extends IDataObject {
 
 // Webhook interfaces
 export interface WebhookCreateParams {
-	url: string;
-	events: string[];
-	branchId?: string;
-	status?: string[];
+	Webhook: {
+		Type: string;  // Kiểu sự kiện
+		Url: string;   // Địa chỉ đăng ký (điểm cuối)
+		IsActive: boolean; // Trạng thái hoạt động
+		Description?: string; // Mô tả
+		Secret?: string; // Mã bí mật
+	}
 }
 
 export interface Webhook {
-	id: string;
-	url: string;
-	events: string[];
-	branchId?: string;
-	status?: string[];
-	createdAt: string;
-	updatedAt: string;
+	id: number;           // webhook id
+	type: string;         // Loại webhook
+	url: string;          // Địa chỉ đăng ký
+	isActive: boolean;    // Trạng thái hoạt động
+	retailerId: number;   // Id cửa hàng
+	description?: string; // Mô tả
+	modifiedDate?: string; // Thời gian cập nhật
+	createdDate?: string;  // Thời gian tạo
+}
+
+// Webhook event types
+export enum WebhookEventType {
+	CustomerUpdate = 'customer.update',
+	CustomerDelete = 'customer.delete',
+	ProductUpdate = 'product.update',
+	ProductDelete = 'product.delete',
+	StockUpdate = 'stock.update',
+	OrderUpdate = 'order.update',
+	InvoiceUpdate = 'invoice.update',
+	PriceBookUpdate = 'pricebook.update',
+	PriceBookDelete = 'pricebook.delete',
+	PriceBookDetailUpdate = 'pricebookdetail.update',
+	PriceBookDetailDelete = 'pricebookdetail.delete',
+	CategoryUpdate = 'category.update',
+	CategoryDelete = 'category.delete',
+	BranchUpdate = 'branch.update',
+	BranchDelete = 'branch.delete'
+}
+
+// Customer update webhook payload
+export interface CustomerUpdateWebhookPayload {
+	Id: string;
+	Attempt: number;
+	Notifications: Array<{
+		Action: string;
+		Data: Array<{
+			Id: number;
+			Code: string;
+			Name: string;
+			Gender?: boolean;
+			BirthDate?: string;
+			ContactNumber?: string;
+			Address?: string;
+			LocationName?: string;
+			Email?: string;
+			ModifiedDate: string;
+			Type?: number;
+			Organization?: string;
+			TaxCode?: string;
+			Comments?: string;
+		}>;
+	}>;
+}
+
+// Customer delete webhook payload
+export interface CustomerDeleteWebhookPayload {
+	RemoveId: number[];
+}
+
+// Product update webhook payload
+export interface ProductUpdateWebhookPayload {
+	Id: string;
+	Attempt: number;
+	Notifications: Array<{
+		Action: string;
+		Data: Array<{
+			Id: number;
+			Code: string;
+			Name: string;
+			FullName: string;
+			CategoryId: number;
+			CategoryName: string;
+			masterProductId?: number;
+			AllowsSale: boolean;
+			HasVariants: boolean;
+			BasePrice: number;
+			Weight?: number;
+			Unit: string;
+			MasterUnitId?: number;
+			ConversionValue?: number;
+			ModifiedDate?: string;
+			Attributes?: Array<{
+				ProductId: number;
+				AttributeName: string;
+				AttributeValue: string;
+			}>;
+			Units?: Array<{
+				Id: number;
+				Code: string;
+				Name: string;
+				FullName: string;
+				Unit: string;
+				ConversionValue: number;
+				BasePrice: number;
+			}>;
+			Inventories?: Array<{
+				ProductId: number;
+				ProductCode: string;
+				ProductName: string;
+				BranchId: number;
+				BranchName: string;
+				Cost: number;
+				OnHand: number;
+				Reserved: number;
+			}>;
+			PriceBooks?: Array<{
+				ProductId: number;
+				PriceBookId: number;
+				PriceBookName: string;
+				Price: number;
+				IsActive: boolean;
+				StartDate?: string;
+				EndDate?: string;
+			}>;
+			Images?: Array<{
+				Image: string;
+			}>;
+		}>;
+	}>;
+}
+
+// Product delete webhook payload
+export interface ProductDeleteWebhookPayload {
+	RemoveId: number[];
+}
+
+// Stock update webhook payload
+export interface StockUpdateWebhookPayload {
+	Id: string;
+	Attempt: number;
+	Notifications: Array<{
+		Action: string;
+		Data: Array<{
+			ProductId: number;
+			ProductCode: string;
+			ProductName: string;
+			BranchId: number;
+			BranchName: string;
+			Cost: number;
+			OnHand: number;
+			Reserved: number;
+		}>;
+	}>;
+}
+
+// Webhook response interface
+export interface WebhookListResponse {
+	total: number;
+	pageSize: number;
+	data: Webhook[];
 }
 
 // Category interfaces
