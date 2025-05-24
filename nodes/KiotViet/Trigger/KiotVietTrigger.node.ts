@@ -12,6 +12,7 @@ import { NodeOperationError } from 'n8n-workflow';
 import { KiotVietApiBase } from '../shared/KiotVietApi';
 import { WebhookEventType, WebhookCreateParams } from '../shared/KiotVietTypes';
 import * as crypto from 'crypto';
+import createHmacSignature from '../shared/utils/createHMAC';
 
 export class KiotVietTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -259,7 +260,7 @@ export class KiotVietTrigger implements INodeType {
 							Url: webhookUrl,
 							IsActive: true,
 							Description: description,
-							Secret: Buffer.from(secret).toString('base64'),
+							Secret: secret,
 						},
 					};
 
@@ -316,24 +317,21 @@ export class KiotVietTrigger implements INodeType {
 		const webhookData = this.getWorkflowStaticData('node');
 		const event = this.getNodeParameter('events') as string;
 
-		// Parse the request body if it's a string
+		// Parse and standardize the request body
 		let body = req.body;
-		let rawBody: string;
 
+		// Ensure body is an object
 		if (typeof body === 'string') {
-			rawBody = body;
 			try {
 				body = JSON.parse(body);
 			} catch (error) {
 				console.error('Invalid webhook payload format:', body);
 				throw new NodeOperationError(this.getNode(), 'Invalid webhook payload format');
 			}
-		} else {
-			// Nếu body đã là object, convert thành string để tạo signature
-			rawBody = JSON.stringify(body);
 		}
 
-		console.log('Received webhook payload:', rawBody);
+		// Create signature from sorted JSON string to ensure consistent ordering
+		console.log('Webhook payload:', body);
 		console.log('Headers:', req.headers);
 
 		// Validate webhook signature if a secret was provided
@@ -347,9 +345,12 @@ export class KiotVietTrigger implements INodeType {
 				};
 			}
 
-			// Verify the signature
-			const secret = webhookData.webhookSecret as string;
-			const hmac = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+			let hmac = await createHmacSignature(body, webhookData.webhookSecret.toString())
+			hmac = `sha1=${hmac}`;
+			console.log('Signature validation:', {
+				calculated: hmac,
+				received: signature
+			});
 
 			if (hmac !== signature) {
 				console.log('Invalid webhook signature', {
@@ -378,11 +379,7 @@ export class KiotVietTrigger implements INodeType {
 			}
 		}
 
-		if (!notificationType || notificationType !== event) {
-			return {
-				noWebhookResponse: true,
-			};
-		}
+		console.log('Determined notification type:', notificationType);
 
 		// Process different webhook formats based on event type
 		let processedData: {
@@ -396,6 +393,8 @@ export class KiotVietTrigger implements INodeType {
 			signatureValid?: boolean;
 			webhookUrl?: string;
 		};
+
+		console.log('Processing webhook data...');
 
 		if (body.Id && body.Attempt && body.Notifications) {
 			// Handle standard notification format for update events
@@ -429,6 +428,8 @@ export class KiotVietTrigger implements INodeType {
 				webhookUrl: this.getNodeWebhookUrl('default'),
 			};
 		}
+
+		console.log('Processed webhook data:', processedData);
 
 		return {
 			workflowData: [this.helpers.returnJsonArray(processedData)],
