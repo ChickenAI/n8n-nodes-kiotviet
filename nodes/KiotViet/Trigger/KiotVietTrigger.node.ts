@@ -237,20 +237,25 @@ export class KiotVietTrigger implements INodeType {
 					// Lấy danh sách tất cả webhook đã đăng ký
 					const existingWebhooks = await kiotViet.getWebhooks();
 
-					// Kiểm tra và xóa các webhook trùng lặp (cùng URL và loại sự kiện)
-					for (const existingWebhook of existingWebhooks) {
-						if (existingWebhook.url === webhookUrl) {
-							// Nếu webhook với URL này đã tồn tại, xóa nó trước
-							console.log(
-								`Removing existing webhook with ID ${existingWebhook.id} for URL ${webhookUrl}`,
-							);
-							try {
-								await kiotViet.deleteWebhook(existingWebhook.id.toString());
-							} catch (deleteError) {
-								console.error(`Failed to delete existing webhook: ${deleteError.message}`);
-								// Tiếp tục mặc dù có lỗi khi xóa
+					// Kiểm tra xem existingWebhooks có phải là mảng không trước khi lặp
+					if (Array.isArray(existingWebhooks)) {
+						// Kiểm tra và xóa các webhook trùng lặp (cùng URL và loại sự kiện)
+						for (const existingWebhook of existingWebhooks) {
+							if (existingWebhook.url === webhookUrl) {
+								// Nếu webhook với URL này đã tồn tại, xóa nó trước
+								console.log(
+									`Removing existing webhook with ID ${existingWebhook.id} for URL ${webhookUrl}`,
+								);
+								try {
+									await kiotViet.deleteWebhook(existingWebhook.id.toString());
+								} catch (deleteError) {
+									console.error(`Failed to delete existing webhook: ${deleteError.message}`);
+									// Tiếp tục mặc dù có lỗi khi xóa
+								}
 							}
 						}
+					} else {
+						console.log('No existing webhooks found or response format is unexpected');
 					}
 
 					// Create webhook payload according to KiotViet API
