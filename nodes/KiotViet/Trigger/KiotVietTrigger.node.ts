@@ -44,9 +44,9 @@ export class KiotVietTrigger implements INodeType {
 			{
 				displayName: 'Sự Kiện',
 				name: 'events',
-				type: 'multiOptions',
+				type: 'options',
 				required: true,
-				default: [],
+				default: '',
 				options: [
 					{
 						name: 'Khách Hàng - Cập Nhật',
@@ -188,7 +188,7 @@ export class KiotVietTrigger implements INodeType {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
 				const webhookData = this.getWorkflowStaticData('node');
 				const webhookUrl = this.getNodeWebhookUrl('default');
-				const events = this.getNodeParameter('events') as string[];
+				const event = this.getNodeParameter('events') as string;
 
 				const kiotViet = new KiotVietApiBase(this);
 				await kiotViet.init();
@@ -197,7 +197,7 @@ export class KiotVietTrigger implements INodeType {
 					// Check if webhook exists
 					const registeredHooks = await kiotViet.getWebhooks();
 					for (const hook of registeredHooks) {
-						if (hook.url === webhookUrl && events.includes(hook.type)) {
+						if (hook.url === webhookUrl && hook.type === event) {
 							webhookData.webhookId = hook.id;
 							return true;
 						}
@@ -210,7 +210,7 @@ export class KiotVietTrigger implements INodeType {
 
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default');
-				const events = this.getNodeParameter('events') as string[];
+				const event = this.getNodeParameter('events') as string;
 				const filters = this.getNodeParameter('filters', {}) as IDataObject;
 				const secret = this.getNodeParameter('secret') as string;
 				const description = this.getNodeParameter('description') as string;
@@ -236,12 +236,14 @@ export class KiotVietTrigger implements INodeType {
 				try {
 					// Lấy danh sách tất cả webhook đã đăng ký
 					const existingWebhooks = await kiotViet.getWebhooks();
-					
+
 					// Kiểm tra và xóa các webhook trùng lặp (cùng URL và loại sự kiện)
 					for (const existingWebhook of existingWebhooks) {
 						if (existingWebhook.url === webhookUrl) {
 							// Nếu webhook với URL này đã tồn tại, xóa nó trước
-							console.log(`Removing existing webhook with ID ${existingWebhook.id} for URL ${webhookUrl}`);
+							console.log(
+								`Removing existing webhook with ID ${existingWebhook.id} for URL ${webhookUrl}`,
+							);
 							try {
 								await kiotViet.deleteWebhook(existingWebhook.id.toString());
 							} catch (deleteError) {
@@ -254,7 +256,7 @@ export class KiotVietTrigger implements INodeType {
 					// Create webhook payload according to KiotViet API
 					const webhookData: WebhookCreateParams = {
 						Webhook: {
-							Type: events[0], // KiotViet supports one event type per webhook
+							Type: event, // KiotViet supports one event type per webhook
 							Url: webhookUrl,
 							IsActive: true,
 							Description: description,
@@ -272,37 +274,7 @@ export class KiotVietTrigger implements INodeType {
 
 					// Lưu thông tin webhook ID và event trong workflow data
 					workflowStaticData.webhookId = response.id;
-					workflowStaticData.webhookEvent = events[0];
-
-					// If multiple events are selected, create additional webhooks
-					if (events.length > 1) {
-						const additionalWebhookIds = [];
-						for (let i = 1; i < events.length; i++) {
-							const additionalWebhookData: WebhookCreateParams = {
-								Webhook: {
-									Type: events[i],
-									Url: webhookUrl,
-									IsActive: true,
-									Description: `${description} (${events[i]})`,
-									Secret: Buffer.from(secret).toString('base64'),
-								},
-							};
-
-							try {
-								const additionalResponse = await kiotViet.httpRequest({
-									method: 'POST',
-									url: '/webhooks',
-									body: additionalWebhookData,
-								});
-
-								additionalWebhookIds.push(additionalResponse.id);
-							} catch (additionalError) {
-								console.error(`Failed to create additional webhook for event ${events[i]}: ${additionalError.message}`);
-								// Tiếp tục với các sự kiện khác ngay cả khi có lỗi
-							}
-						}
-						workflowStaticData.additionalWebhookIds = additionalWebhookIds;
-					}
+					workflowStaticData.webhookEvent = event;
 
 					return true;
 				} catch (error) {
@@ -313,7 +285,7 @@ export class KiotVietTrigger implements INodeType {
 							`Webhook đã tồn tại với cùng loại sự kiện. Vui lòng thử lại sau vài phút hoặc kiểm tra lại các webhook đã đăng ký.`,
 						);
 					}
-					
+
 					throw new NodeOperationError(
 						this.getNode(),
 						`KiotViet webhook creation failed: ${error.message}`,
@@ -335,24 +307,13 @@ export class KiotVietTrigger implements INodeType {
 							url: `/webhooks/${webhookData.webhookId}`,
 						});
 
-						// Delete any additional webhooks if they exist
-						if (
-							webhookData.additionalWebhookIds &&
-							Array.isArray(webhookData.additionalWebhookIds)
-						) {
-							for (const id of webhookData.additionalWebhookIds) {
-								await kiotViet.httpRequest({
-									method: 'DELETE',
-									url: `/webhooks/${id}`,
-								});
-							}
-						}
+
 
 						// Clear webhook data
 						delete webhookData.webhookId;
 						delete webhookData.webhookSecret;
 						delete webhookData.webhookEvent;
-						delete webhookData.additionalWebhookIds;
+
 
 						return true;
 					} catch (error) {
@@ -368,12 +329,12 @@ export class KiotVietTrigger implements INodeType {
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
 		const req = this.getRequestObject();
 		const webhookData = this.getWorkflowStaticData('node');
-		const events = this.getNodeParameter('events') as string[];
+		const event = this.getNodeParameter('events') as string;
 
 		// Parse the request body if it's a string
 		let body = req.body;
 		let rawBody: string;
-		
+
 		if (typeof body === 'string') {
 			rawBody = body;
 			try {
@@ -406,9 +367,9 @@ export class KiotVietTrigger implements INodeType {
 			const hmac = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
 
 			if (hmac !== signature) {
-				console.log('Invalid webhook signature', { 
-					expected: hmac, 
-					received: signature 
+				console.log('Invalid webhook signature', {
+					expected: hmac,
+					received: signature,
 				});
 				// Return 401 Unauthorized
 				return {
@@ -419,21 +380,20 @@ export class KiotVietTrigger implements INodeType {
 
 		// Verify the event type is one we're listening for
 		let notificationType = '';
-		
+
 		// For update events with Notifications structure
 		if (body.Notifications && Array.isArray(body.Notifications) && body.Notifications.length > 0) {
 			notificationType = body.Notifications[0].Action;
-		} 
+		}
 		// For delete events with RemoveId structure
 		else if (body.RemoveId && Array.isArray(body.RemoveId)) {
 			// Try to determine the event type from the event parameter
-			const eventType = events.find(event => event.includes('delete'));
-			if (eventType) {
-				notificationType = eventType;
+			if (event.includes('delete')) {
+				notificationType = event;
 			}
 		}
-		
-		if (!notificationType || !events.includes(notificationType)) {
+
+		if (!notificationType || notificationType !== event) {
 			return {
 				noWebhookResponse: true,
 			};
