@@ -326,10 +326,37 @@ export class KiotVietProduct implements INodeType {
 					if (!returnAll) {
 						const limit = this.getNodeParameter('limit', i) as number;
 						qs.pageSize = limit;
-					}
+						const response = await productApi.list(qs);
+						responseData = response as unknown as KiotVietListResponse<Product>;
+					} else {
+						// Lấy tất cả sản phẩm bằng cách phân trang
+						const PAGE_SIZE = 100; // Kích thước trang tối đa
+						let currentPage = 1;
+						let allProducts: Product[] = [];
+						let totalItems = 0;
 
-					const response = await productApi.list(qs);
-					responseData = response as unknown as KiotVietListResponse<Product>;
+						do {
+							qs.pageSize = PAGE_SIZE;
+							qs.currentItem = (currentPage - 1) * PAGE_SIZE;
+							const response = await productApi.list(qs);
+							const data = response as unknown as KiotVietListResponse<Product>;
+							
+							if (currentPage === 1) {
+								totalItems = data.total;
+							}
+
+							if (data.data && data.data.length > 0) {
+								allProducts = allProducts.concat(data.data);
+							}
+
+							currentPage++;
+						} while (allProducts.length < totalItems);
+
+						responseData = {
+							data: allProducts,
+							total: totalItems,
+						} as KiotVietListResponse<Product>;
+					}
 				} else if (operation === 'update') {
 					const productId = parseInt(this.getNodeParameter('productId', i) as string);
 					const name = this.getNodeParameter('name', i) as string;
