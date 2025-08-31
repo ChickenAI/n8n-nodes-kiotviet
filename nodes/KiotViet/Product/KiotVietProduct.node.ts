@@ -293,18 +293,21 @@ export class KiotVietProduct implements INodeType {
 				},
 				options: [
 					{
+						displayName: 'Bắt ĐầU Từ Item',
+						name: 'currentItem',
+						type: 'number',
+						typeOptions: {
+							minValue: 0,
+						},
+						default: 0,
+						description: 'Lấy dữ liệu từ bản ghi currentItem',
+					},
+					{
 						displayName: 'Chi Nhánh',
 						name: 'branchIds',
 						type: 'string',
 						default: '',
 						description: 'ID các chi nhánh (cách nhau bởi dấu phẩy)',
-					},
-					{
-						displayName: 'Từ Ngày Cập Nhật',
-						name: 'lastModifiedFrom',
-						type: 'dateTime',
-						default: '',
-						description: 'Lọc theo ngày cập nhật tồn kho',
 					},
 					{
 						displayName: 'ĐếN Ngày Cập Nhật',
@@ -319,6 +322,31 @@ export class KiotVietProduct implements INodeType {
 						type: 'string',
 						default: '',
 						description: 'Mã sản phẩm cần xem tồn kho (cách nhau bởi dấu phẩy)',
+					},
+					{
+						displayName: 'Sắp Xếp Theo',
+						name: 'orderBy',
+						type: 'string',
+						default: '',
+						description: 'Trường sắp xếp dữ liệu (ví dụ: Code, Name)',
+					},
+					{
+						displayName: 'Số Lượng Mỗi Trang',
+						name: 'pageSize',
+						type: 'number',
+						typeOptions: {
+							minValue: 1,
+							maxValue: 100,
+						},
+						default: 20,
+						description: 'Số items trong 1 trang, mặc định 20 items, tối đa 100 items',
+					},
+					{
+						displayName: 'Từ Ngày Cập Nhật',
+						name: 'lastModifiedFrom',
+						type: 'dateTime',
+						default: '',
+						description: 'Lọc theo ngày cập nhật tồn kho',
 					},
 				],
 			},
@@ -410,6 +438,19 @@ export class KiotVietProduct implements INodeType {
 
 					if (inventoryFilters.lastModifiedTo) {
 						qs.lastModifiedTo = inventoryFilters.lastModifiedTo;
+					}
+
+					// Add new parameters
+					if (inventoryFilters.orderBy) {
+						qs.orderBy = inventoryFilters.orderBy;
+					}
+
+					if (inventoryFilters.pageSize) {
+						qs.pageSize = inventoryFilters.pageSize;
+					}
+
+					if (inventoryFilters.currentItem !== undefined) {
+						qs.currentItem = inventoryFilters.currentItem;
 					}
 
 					const response = await productApi.getInventoryLevels(qs);
