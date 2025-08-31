@@ -46,25 +46,25 @@ export class KiotVietCategory implements INodeType {
 						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo danh mục mới',
-						action: 'Tạo danh mục',
+						action: 'T o danh m c',
 					},
 					{
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy danh mục theo ID',
-						action: 'Lấy danh mục',
+						action: 'L y danh m c',
 					},
 					{
-						name: 'Lấy Nhiều',
+						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách danh mục',
-						action: 'Lấy danh sách danh mục',
+						action: 'L y danh s ch danh m c',
 					},
 					{
 						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật danh mục',
-						action: 'Cập nhật danh mục',
+						action: 'C p nh t danh m c',
 					},
 				],
 				default: 'getAll',
@@ -100,7 +100,7 @@ export class KiotVietCategory implements INodeType {
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Trả về tất cả kết quả',
+				description: 'Whether to return all results or only up to a given limit',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -112,7 +112,7 @@ export class KiotVietCategory implements INodeType {
 				name: 'limit',
 				type: 'number',
 				default: 50,
-				description: 'Số lượng danh mục tối đa trả về',
+				description: 'Max number of results to return',
 				typeOptions: {
 					minValue: 1,
 				},

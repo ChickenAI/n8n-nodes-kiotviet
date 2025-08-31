@@ -46,43 +46,43 @@ export class KiotVietInvoice implements INodeType {
 						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo hóa đơn mới',
-						action: 'Tạo hóa đơn',
+						action: 'T o h a n',
 					},
 					{
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy hóa đơn theo ID',
-						action: 'Lấy hóa đơn',
+						action: 'L y h a n',
 					},
 					{
 						name: 'Lấy Theo Mã',
 						value: 'getByCode',
 						description: 'Lấy hóa đơn theo mã',
-						action: 'Lấy hóa đơn theo mã',
+						action: 'L y h a n theo m',
 					},
 					{
-						name: 'Lấy Nhiều',
+						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách hóa đơn',
-						action: 'Lấy danh sách hóa đơn',
+						action: 'L y danh s ch h a n',
 					},
 					{
 						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật hóa đơn',
-						action: 'Cập nhật hóa đơn',
+						action: 'C p nh t h a n',
 					},
 					{
 						name: 'Hủy',
 						value: 'cancel',
 						description: 'Hủy hóa đơn',
-						action: 'Hủy hóa đơn',
+						action: 'H y h a n',
 					},
 				],
 				default: 'getAll',
 			},
 			{
-				displayName: 'ID Hóa Đơn',
+				displayName: 'ID Hóa ĐơN',
 				name: 'invoiceId',
 				type: 'string',
 				required: true,
@@ -95,7 +95,7 @@ export class KiotVietInvoice implements INodeType {
 				description: 'ID của hóa đơn',
 			},
 			{
-				displayName: 'Mã Hóa Đơn',
+				displayName: 'Mã Hóa ĐơN',
 				name: 'invoiceCode',
 				type: 'string',
 				required: true,
@@ -125,7 +125,7 @@ export class KiotVietInvoice implements INodeType {
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Trả về tất cả kết quả',
+				description: 'Whether to return all results or only up to a given limit',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -137,7 +137,7 @@ export class KiotVietInvoice implements INodeType {
 				name: 'limit',
 				type: 'number',
 				default: 50,
-				description: 'Số lượng hóa đơn tối đa trả về',
+				description: 'Max number of results to return',
 				typeOptions: {
 					minValue: 1,
 				},
@@ -149,7 +149,7 @@ export class KiotVietInvoice implements INodeType {
 				},
 			},
 			{
-				displayName: 'Sản Phẩm Trong Hóa Đơn',
+				displayName: 'Sản Phẩm Trong Hóa ĐơN',
 				name: 'invoiceDetails',
 				placeholder: 'Thêm Sản Phẩm',
 				type: 'fixedCollection',
@@ -251,7 +251,7 @@ export class KiotVietInvoice implements INodeType {
 						description: 'Lọc từ ngày (định dạng YYYY-MM-DD)',
 					},
 					{
-						displayName: 'Đến Ngày',
+						displayName: 'ĐếN Ngày',
 						name: 'toDate',
 						type: 'string',
 						default: '',
@@ -267,7 +267,7 @@ export class KiotVietInvoice implements INodeType {
 								value: 'Draft',
 							},
 							{
-								name: 'Đang Xử Lý',
+								name: 'ĐAng Xử Lý',
 								value: 'InProgress',
 							},
 							{
@@ -275,7 +275,7 @@ export class KiotVietInvoice implements INodeType {
 								value: 'Completed',
 							},
 							{
-								name: 'Đã Hủy',
+								name: 'ĐÃ Hủy',
 								value: 'Canceled',
 							},
 						],
@@ -340,7 +340,6 @@ export class KiotVietInvoice implements INodeType {
 							},
 						],
 						default: 'Cash',
-						description: 'Phương thức thanh toán',
 					},
 					{
 						displayName: 'Số Tiền Thanh Toán',

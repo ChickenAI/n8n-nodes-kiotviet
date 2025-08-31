@@ -37,40 +37,40 @@ export class KiotVietCustomer implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Thao tác',
+				displayName: 'Thao Tác',
 				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Tạo mới',
+						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo khách hàng mới',
-						action: 'Tạo khách hàng',
+						action: 'T o kh ch h ng',
 					},
 					{
-						name: 'Lấy theo ID',
+						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy thông tin khách hàng theo ID',
-						action: 'Lấy khách hàng',
+						action: 'L y kh ch h ng',
 					},
 					{
-						name: 'Lấy nhiều',
+						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách nhiều khách hàng',
-						action: 'Lấy danh sách khách hàng',
+						action: 'L y danh s ch kh ch h ng',
 					},
 					{
-						name: 'Cập nhật',
+						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật thông tin khách hàng',
-						action: 'Cập nhật khách hàng',
+						action: 'C p nh t kh ch h ng',
 					},
 				],
 				default: 'getAll',
 			},
 			{
-				displayName: 'ID Khách hàng',
+				displayName: 'ID Khách Hàng',
 				name: 'customerId',
 				type: 'string',
 				required: true,
@@ -83,11 +83,11 @@ export class KiotVietCustomer implements INodeType {
 				description: 'Mã định danh của khách hàng',
 			},
 			{
-				displayName: 'Lấy toàn bộ',
+				displayName: 'Lấy toàn Bộ',
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Chọn để lấy toàn bộ kết quả hoặc giới hạn số lượng',
+				description: 'Whether to return all results or only up to a given limit',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -95,11 +95,11 @@ export class KiotVietCustomer implements INodeType {
 				},
 			},
 			{
-				displayName: 'Giới hạn',
+				displayName: 'Giới Hạn',
 				name: 'limit',
 				type: 'number',
 				default: 50,
-				description: 'Số lượng kết quả tối đa cần lấy',
+				description: 'Max number of results to return',
 				typeOptions: {
 					minValue: 1,
 				},
@@ -111,7 +111,7 @@ export class KiotVietCustomer implements INodeType {
 				},
 			},
 			{
-				displayName: 'Tên khách hàng',
+				displayName: 'Tên Khách Hàng',
 				name: 'name',
 				type: 'string',
 				default: '',
@@ -124,7 +124,7 @@ export class KiotVietCustomer implements INodeType {
 				description: 'Họ tên của khách hàng',
 			},
 			{
-				displayName: 'Trường bổ sung',
+				displayName: 'Trường Bổ Sung',
 				name: 'additionalFields',
 				type: 'collection',
 				placeholder: 'Thêm trường',
@@ -136,7 +136,7 @@ export class KiotVietCustomer implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Số điện thoại',
+						displayName: 'Số đIện Thoại',
 						name: 'contactNumber',
 						type: 'string',
 						default: '',
@@ -151,28 +151,28 @@ export class KiotVietCustomer implements INodeType {
 						description: 'Email của khách hàng',
 					},
 					{
-						displayName: 'Địa chỉ',
+						displayName: 'ĐịA Chỉ',
 						name: 'address',
 						type: 'string',
 						default: '',
 						description: 'Địa chỉ khách hàng',
 					},
 					{
-						displayName: 'Giới tính',
+						displayName: 'Giới Tính',
 						name: 'gender',
 						type: 'boolean',
 						default: true,
 						description: 'Nam (true) hoặc Nữ (false)',
 					},
 					{
-						displayName: 'Ngày sinh',
+						displayName: 'Ngày Sinh',
 						name: 'birthDate',
 						type: 'string',
 						default: '',
 						description: 'Ngày sinh của khách hàng (YYYY-MM-DD)',
 					},
 					{
-						displayName: 'Nhóm khách hàng',
+						displayName: 'Nhóm Khách Hàng',
 						name: 'groupIds',
 						type: 'string',
 						default: '',
@@ -181,7 +181,7 @@ export class KiotVietCustomer implements INodeType {
 				],
 			},
 			{
-				displayName: 'Bộ lọc',
+				displayName: 'Bộ Lọc',
 				name: 'filters',
 				type: 'collection',
 				placeholder: 'Thêm bộ lọc',
@@ -193,21 +193,21 @@ export class KiotVietCustomer implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Từ khóa tìm kiếm',
+						displayName: 'Từ khóa Tìm Kiếm',
 						name: 'searchTerm',
 						type: 'string',
 						default: '',
 						description: 'Tìm theo tên, số điện thoại hoặc mã khách hàng',
 					},
 					{
-						displayName: 'ID nhóm',
+						displayName: 'ID Nhóm',
 						name: 'groupId',
 						type: 'string',
 						default: '',
 						description: 'Lọc khách hàng theo ID nhóm',
 					},
 					{
-						displayName: 'Sửa đổi từ ngày',
+						displayName: 'Sửa đổI Từ Ngày',
 						name: 'lastModifiedFrom',
 						type: 'string',
 						default: '',
