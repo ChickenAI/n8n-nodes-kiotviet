@@ -38,31 +38,31 @@ export class KiotVietBranch implements INodeType {
 						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo chi nhánh mới',
-						action: 'T o chi nh nh',
+						action: 'Tạo chi nhánh',
 					},
 					{
 						name: 'Xóa',
 						value: 'delete',
 						description: 'Xóa chi nhánh',
-						action: 'X a chi nh nh',
+						action: 'Xóa chi nhánh',
 					},
 					{
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy chi nhánh theo ID',
-						action: 'L y chi nh nh',
+						action: 'Lấy chi nhánh',
 					},
 					{
 						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách chi nhánh',
-						action: 'L y danh s ch chi nh nh',
+						action: 'Lấy danh sách chi nhánh',
 					},
 					{
 						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật chi nhánh',
-						action: 'C p nh t chi nh nh',
+						action: 'Cập nhật chi nhánh',
 					},
 				],
 				default: 'getAll',
@@ -85,7 +85,7 @@ export class KiotVietBranch implements INodeType {
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to return all results or only up to a given limit',
+				description: 'Lấy toàn bộ kết quả hoặc giới hạn số lượng',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -131,14 +131,14 @@ export class KiotVietBranch implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Số ĐIện Thoại',
+						displayName: 'Số Điện Thoại',
 						name: 'phoneNumber',
 						type: 'string',
 						default: '',
 						description: 'Số điện thoại chi nhánh',
 					},
 					{
-						displayName: 'Số ĐIện Thoại',
+						displayName: 'Số Điện Thoại',
 						name: 'phoneNumber',
 						type: 'string',
 						default: '',

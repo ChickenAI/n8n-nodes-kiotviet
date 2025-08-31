@@ -46,25 +46,25 @@ export class KiotVietCustomer implements INodeType {
 						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo khách hàng mới',
-						action: 'T o kh ch h ng',
+						action: 'Tạo khách hàng',
 					},
 					{
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy thông tin khách hàng theo ID',
-						action: 'L y kh ch h ng',
+						action: 'Lấy khách hàng',
 					},
 					{
 						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách nhiều khách hàng',
-						action: 'L y danh s ch kh ch h ng',
+						action: 'Lấy danh sách khách hàng',
 					},
 					{
 						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật thông tin khách hàng',
-						action: 'C p nh t kh ch h ng',
+						action: 'Cập nhật khách hàng',
 					},
 				],
 				default: 'getAll',
@@ -87,7 +87,7 @@ export class KiotVietCustomer implements INodeType {
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Whether to return all results or only up to a given limit',
+				description: 'Lấy toàn bộ kết quả hoặc giới hạn số lượng',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -136,7 +136,7 @@ export class KiotVietCustomer implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Số đIện Thoại',
+						displayName: 'Số Điện Thoại',
 						name: 'contactNumber',
 						type: 'string',
 						default: '',
@@ -151,7 +151,7 @@ export class KiotVietCustomer implements INodeType {
 						description: 'Email của khách hàng',
 					},
 					{
-						displayName: 'ĐịA Chỉ',
+						displayName: 'Địa Chỉ',
 						name: 'address',
 						type: 'string',
 						default: '',
@@ -207,7 +207,7 @@ export class KiotVietCustomer implements INodeType {
 						description: 'Lọc khách hàng theo ID nhóm',
 					},
 					{
-						displayName: 'Sửa đổI Từ Ngày',
+						displayName: 'Sửa đổi Từ Ngày',
 						name: 'lastModifiedFrom',
 						type: 'string',
 						default: '',
