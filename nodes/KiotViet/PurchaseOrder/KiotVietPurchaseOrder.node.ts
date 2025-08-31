@@ -38,37 +38,37 @@ export class KiotVietPurchaseOrder implements INodeType {
 						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo đơn đặt hàng mới',
-						action: 'Tạo đơn đặt hàng',
+						action: 'T o n t h ng',
 					},
 					{
 						name: 'Hủy',
 						value: 'cancel',
 						description: 'Hủy đơn đặt hàng',
-						action: 'Hủy đơn đặt hàng',
+						action: 'H y n t h ng',
 					},
 					{
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy đơn đặt hàng theo ID',
-						action: 'Lấy đơn đặt hàng',
+						action: 'L y n t h ng',
 					},
 					{
-						name: 'Lấy Nhiều',
+						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách đơn đặt hàng',
-						action: 'Lấy danh sách đơn đặt hàng',
+						action: 'L y danh s ch n t h ng',
 					},
 					{
 						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật đơn đặt hàng',
-						action: 'Cập nhật đơn đặt hàng',
+						action: 'C p nh t n t h ng',
 					},
 				],
 				default: 'getAll',
 			},
 			{
-				displayName: 'ID Đơn Đặt Hàng',
+				displayName: 'ID ĐơN ĐặT Hàng',
 				name: 'purchaseOrderId',
 				type: 'string',
 				required: true,
@@ -85,7 +85,7 @@ export class KiotVietPurchaseOrder implements INodeType {
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Lấy toàn bộ kết quả hoặc giới hạn số lượng',
+				description: 'Whether to return all results or only up to a given limit',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -97,7 +97,7 @@ export class KiotVietPurchaseOrder implements INodeType {
 				name: 'limit',
 				type: 'number',
 				default: 50,
-				description: 'Số lượng kết quả tối đa cần lấy',
+				description: 'Max number of results to return',
 				typeOptions: {
 					minValue: 1,
 				},
@@ -132,10 +132,9 @@ export class KiotVietPurchaseOrder implements INodeType {
 						operation: ['create'],
 					},
 				},
-				description: 'ID nhà cung cấp',
 			},
 			{
-				displayName: 'Chi Tiết Đơn Hàng',
+				displayName: 'Chi Tiết ĐơN Hàng',
 				name: 'orderDetails',
 				placeholder: 'Thêm Sản Phẩm',
 				type: 'fixedCollection',
@@ -224,7 +223,7 @@ export class KiotVietPurchaseOrder implements INodeType {
 						type: 'options',
 						options: [
 							{
-								name: 'Đang Xử Lý',
+								name: 'ĐAng Xử Lý',
 								value: 'Processing',
 							},
 							{
@@ -232,7 +231,7 @@ export class KiotVietPurchaseOrder implements INodeType {
 								value: 'Completed',
 							},
 							{
-								name: 'Đã Hủy',
+								name: 'ĐÃ Hủy',
 								value: 'Canceled',
 							},
 						],
@@ -247,7 +246,7 @@ export class KiotVietPurchaseOrder implements INodeType {
 						description: 'Lọc từ ngày tạo (YYYY-MM-DD)',
 					},
 					{
-						displayName: 'Đến Ngày',
+						displayName: 'ĐếN Ngày',
 						name: 'createdTo',
 						type: 'string',
 						default: '',

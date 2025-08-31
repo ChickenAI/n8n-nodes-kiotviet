@@ -38,13 +38,13 @@ export class KiotVietSupplier implements INodeType {
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy nhà cung cấp theo ID',
-						action: 'Lấy nhà cung cấp',
+						action: 'L y nh cung c p',
 					},
 					{
-						name: 'Lấy Nhiều',
+						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách nhà cung cấp',
-						action: 'Lấy danh sách nhà cung cấp',
+						action: 'L y danh s ch nh cung c p',
 					},
 				],
 				default: 'getAll',
@@ -67,7 +67,7 @@ export class KiotVietSupplier implements INodeType {
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Lấy toàn bộ kết quả hoặc giới hạn số lượng',
+				description: 'Whether to return all results or only up to a given limit',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -79,7 +79,7 @@ export class KiotVietSupplier implements INodeType {
 				name: 'limit',
 				type: 'number',
 				default: 50,
-				description: 'Số lượng kết quả tối đa cần lấy',
+				description: 'Max number of results to return',
 				typeOptions: {
 					minValue: 1,
 				},
@@ -115,11 +115,11 @@ export class KiotVietSupplier implements INodeType {
 						type: 'options',
 						options: [
 							{
-								name: 'Đang Hoạt Động',
+								name: 'ĐAng Hoạt ĐộNg',
 								value: 'Active',
 							},
 							{
-								name: 'Ngừng Hoạt Động',
+								name: 'Ngừng Hoạt ĐộNg',
 								value: 'Inactive',
 							},
 						],

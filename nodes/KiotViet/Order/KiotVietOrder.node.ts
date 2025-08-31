@@ -46,37 +46,37 @@ export class KiotVietOrder implements INodeType {
 						name: 'Hủy',
 						value: 'cancel',
 						description: 'Hủy đơn hàng',
-						action: 'Hủy đơn hàng',
+						action: 'H y n h ng',
 					},
 					{
 						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo đơn hàng mới',
-						action: 'Tạo đơn hàng',
+						action: 'T o n h ng',
 					},
 					{
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy đơn hàng theo ID',
-						action: 'Lấy đơn hàng',
+						action: 'L y n h ng',
 					},
 					{
 						name: 'Lấy Theo Mã',
 						value: 'getByCode',
 						description: 'Lấy đơn hàng theo mã',
-						action: 'Lấy đơn hàng theo mã',
+						action: 'L y n h ng theo m',
 					},
 					{
-						name: 'Lấy Nhiều',
+						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách đơn hàng',
-						action: 'Lấy danh sách đơn hàng',
+						action: 'L y danh s ch n h ng',
 					},
 					{
 						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật đơn hàng',
-						action: 'Cập nhật đơn hàng',
+						action: 'C p nh t n h ng',
 					},
 				],
 				default: 'getAll',
@@ -86,7 +86,7 @@ export class KiotVietOrder implements INodeType {
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Trả về tất cả kết quả',
+				description: 'Whether to return all results or only up to a given limit',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -98,7 +98,7 @@ export class KiotVietOrder implements INodeType {
 				name: 'limit',
 				type: 'number',
 				default: 50,
-				description: 'Số lượng đơn hàng tối đa trả về',
+				description: 'Max number of results to return',
 				typeOptions: {
 					minValue: 1,
 				},
@@ -110,7 +110,7 @@ export class KiotVietOrder implements INodeType {
 				},
 			},
 			{
-				displayName: 'ID Đơn Hàng',
+				displayName: 'ID ĐơN Hàng',
 				name: 'orderId',
 				type: 'string',
 				required: true,
@@ -123,7 +123,7 @@ export class KiotVietOrder implements INodeType {
 				description: 'ID của đơn hàng',
 			},
 			{
-				displayName: 'Mã Đơn Hàng',
+				displayName: 'Mã ĐơN Hàng',
 				name: 'orderCode',
 				type: 'string',
 				required: true,
@@ -162,7 +162,7 @@ export class KiotVietOrder implements INodeType {
 			},
 			{},
 			{
-				displayName: 'Sản Phẩm Trong Đơn',
+				displayName: 'Sản Phẩm Trong ĐơN',
 				name: 'orderProducts',
 				placeholder: 'Thêm Sản Phẩm',
 				type: 'fixedCollection',
@@ -264,7 +264,7 @@ export class KiotVietOrder implements INodeType {
 						description: 'Lọc từ ngày (định dạng YYYY-MM-DD)',
 					},
 					{
-						displayName: 'Đến Ngày',
+						displayName: 'ĐếN Ngày',
 						name: 'toDate',
 						type: 'string',
 						default: '',
@@ -280,11 +280,11 @@ export class KiotVietOrder implements INodeType {
 								value: 'Completed',
 							},
 							{
-								name: 'Đã Hủy',
+								name: 'ĐÃ Hủy',
 								value: 'Cancelled',
 							},
 							{
-								name: 'Đang Xử Lý',
+								name: 'ĐAng Xử Lý',
 								value: 'Processing',
 							},
 						],

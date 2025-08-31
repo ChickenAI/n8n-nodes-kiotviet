@@ -73,6 +73,12 @@ export class KiotVietProduct implements INodeType {
 						action: 'Lấy danh sách sản phẩm',
 					},
 					{
+						name: 'Lấy Tồn Kho',
+						value: 'getInventoryLevels',
+						description: 'Lấy thông tin tồn kho của sản phẩm',
+						action: 'Lấy thông tin tồn kho',
+					},
+					{
 						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật sản phẩm',
@@ -214,7 +220,7 @@ export class KiotVietProduct implements INodeType {
 						description: 'Mô tả sản phẩm',
 					},
 					{
-						displayName: 'Đơn Vị',
+						displayName: 'ĐơN Vị',
 						name: 'unit',
 						type: 'string',
 						default: '',
@@ -274,6 +280,48 @@ export class KiotVietProduct implements INodeType {
 					},
 				],
 			},
+			{
+				displayName: 'Bộ Lọc Tồn Kho',
+				name: 'inventoryFilters',
+				type: 'collection',
+				placeholder: 'Thêm Bộ Lọc',
+				default: {},
+				displayOptions: {
+					show: {
+						operation: ['getInventoryLevels'],
+					},
+				},
+				options: [
+					{
+						displayName: 'Chi Nhánh',
+						name: 'branchIds',
+						type: 'string',
+						default: '',
+						description: 'ID các chi nhánh (cách nhau bởi dấu phẩy)',
+					},
+					{
+						displayName: 'Từ Ngày Cập Nhật',
+						name: 'lastModifiedFrom',
+						type: 'dateTime',
+						default: '',
+						description: 'Lọc theo ngày cập nhật tồn kho',
+					},
+					{
+						displayName: 'ĐếN Ngày Cập Nhật',
+						name: 'lastModifiedTo',
+						type: 'dateTime',
+						default: '',
+						description: 'Lọc đến ngày cập nhật tồn kho',
+					},
+					{
+						displayName: 'Mã Sản Phẩm',
+						name: 'productCodes',
+						type: 'string',
+						default: '',
+						description: 'Mã sản phẩm cần xem tồn kho (cách nhau bởi dấu phẩy)',
+					},
+				],
+			},
 		],
 	};
 
@@ -330,6 +378,42 @@ export class KiotVietProduct implements INodeType {
 
 					const response = await productApi.list(qs);
 					responseData = response as unknown as KiotVietListResponse<Product>;
+				} else if (operation === 'getInventoryLevels') {
+					const inventoryFilters = this.getNodeParameter('inventoryFilters', i) as IDataObject;
+
+					const qs: IDataObject = {};
+
+					// Process filters
+					if (inventoryFilters.branchIds) {
+						const branchIds = (inventoryFilters.branchIds as string)
+							.split(',')
+							.map((id) => parseInt(id.trim(), 10))
+							.filter((id) => !isNaN(id));
+						if (branchIds.length > 0) {
+							qs.branchIds = branchIds;
+						}
+					}
+
+					if (inventoryFilters.productCodes) {
+						const productCodes = (inventoryFilters.productCodes as string)
+							.split(',')
+							.map((code) => code.trim())
+							.filter((code) => code.length > 0);
+						if (productCodes.length > 0) {
+							qs.productCodes = productCodes;
+						}
+					}
+
+					if (inventoryFilters.lastModifiedFrom) {
+						qs.lastModifiedFrom = inventoryFilters.lastModifiedFrom;
+					}
+
+					if (inventoryFilters.lastModifiedTo) {
+						qs.lastModifiedTo = inventoryFilters.lastModifiedTo;
+					}
+
+					const response = await productApi.getInventoryLevels(qs);
+					responseData = response as unknown as any;
 				} else if (operation === 'update') {
 					const productId = parseInt(this.getNodeParameter('productId', i) as string);
 					const name = this.getNodeParameter('name', i) as string;

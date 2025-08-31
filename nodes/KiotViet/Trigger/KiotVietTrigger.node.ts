@@ -75,12 +75,12 @@ export class KiotVietTrigger implements INodeType {
 						description: 'Kích hoạt khi tồn kho được cập nhật',
 					},
 					{
-						name: 'Đặt Hàng - Cập Nhật',
+						name: 'ĐặT Hàng - Cập Nhật',
 						value: WebhookEventType.OrderUpdate,
 						description: 'Kích hoạt khi đơn đặt hàng được cập nhật',
 					},
 					{
-						name: 'Hóa Đơn - Cập Nhật',
+						name: 'Hóa ĐơN - Cập Nhật',
 						value: WebhookEventType.InvoiceUpdate,
 						description: 'Kích hoạt khi hóa đơn được cập nhật',
 					},
@@ -168,11 +168,11 @@ export class KiotVietTrigger implements INodeType {
 								value: 'Completed',
 							},
 							{
-								name: 'Đang Xử Lý',
+								name: 'ĐAng Xử Lý',
 								value: 'Processing',
 							},
 							{
-								name: 'Đã Hủy',
+								name: 'ĐÃ Hủy',
 								value: 'Canceled',
 							},
 						],

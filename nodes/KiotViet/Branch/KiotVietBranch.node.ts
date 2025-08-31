@@ -38,31 +38,31 @@ export class KiotVietBranch implements INodeType {
 						name: 'Tạo Mới',
 						value: 'create',
 						description: 'Tạo chi nhánh mới',
-						action: 'Tạo chi nhánh',
+						action: 'T o chi nh nh',
 					},
 					{
 						name: 'Xóa',
 						value: 'delete',
 						description: 'Xóa chi nhánh',
-						action: 'Xóa chi nhánh',
+						action: 'X a chi nh nh',
 					},
 					{
 						name: 'Lấy Theo ID',
 						value: 'get',
 						description: 'Lấy chi nhánh theo ID',
-						action: 'Lấy chi nhánh',
+						action: 'L y chi nh nh',
 					},
 					{
-						name: 'Lấy Nhiều',
+						name: 'Get Many',
 						value: 'getAll',
 						description: 'Lấy danh sách chi nhánh',
-						action: 'Lấy danh sách chi nhánh',
+						action: 'L y danh s ch chi nh nh',
 					},
 					{
 						name: 'Cập Nhật',
 						value: 'update',
 						description: 'Cập nhật chi nhánh',
-						action: 'Cập nhật chi nhánh',
+						action: 'C p nh t chi nh nh',
 					},
 				],
 				default: 'getAll',
@@ -85,7 +85,7 @@ export class KiotVietBranch implements INodeType {
 				name: 'returnAll',
 				type: 'boolean',
 				default: false,
-				description: 'Lấy toàn bộ kết quả hoặc giới hạn số lượng',
+				description: 'Whether to return all results or only up to a given limit',
 				displayOptions: {
 					show: {
 						operation: ['getAll'],
@@ -106,7 +106,7 @@ export class KiotVietBranch implements INodeType {
 				description: 'Tên của chi nhánh',
 			},
 			{
-				displayName: 'Địa Chỉ',
+				displayName: 'ĐịA Chỉ',
 				name: 'address',
 				type: 'string',
 				default: '',
@@ -131,14 +131,14 @@ export class KiotVietBranch implements INodeType {
 				},
 				options: [
 					{
-						displayName: 'Số Điện Thoại',
+						displayName: 'Số ĐIện Thoại',
 						name: 'phoneNumber',
 						type: 'string',
 						default: '',
 						description: 'Số điện thoại chi nhánh',
 					},
 					{
-						displayName: 'Số Điện Thoại',
+						displayName: 'Số ĐIện Thoại',
 						name: 'phoneNumber',
 						type: 'string',
 						default: '',
@@ -185,11 +185,11 @@ export class KiotVietBranch implements INodeType {
 						type: 'options',
 						options: [
 							{
-								name: 'Đang Hoạt Động',
+								name: 'ĐAng Hoạt ĐộNg',
 								value: 'Active',
 							},
 							{
-								name: 'Ngừng Hoạt Động',
+								name: 'Ngừng Hoạt ĐộNg',
 								value: 'Inactive',
 							},
 						],

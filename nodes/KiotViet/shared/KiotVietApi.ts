@@ -252,6 +252,11 @@ export class KiotVietApiBase {
 		return this.client.purchaseOrders;
 	}
 
+	async transfers() {
+		if (!this.client) await this.init();
+		return this.client.transfers;
+	}
+
 	// Helper method to handle pagination parameters
 	getPaginationParameters(qs: IDataObject) {
 		return {

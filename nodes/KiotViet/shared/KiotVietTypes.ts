@@ -540,3 +540,75 @@ export interface CategoryHandler {
 	getById(id: number): Promise<Category>;
 	update?: (id: number, data: CategoryUpdateParams) => Promise<Category>;
 }
+
+// Transfer interfaces
+export interface Transfer extends IDataObject {
+	id: number;
+	code: string;
+	status: number;
+	transferredDate: string;
+	receivedDate: string;
+	createdById: number;
+	createdByName: string;
+	fromBranchId: number;
+	fromBranchName: string;
+	toBranchId: number;
+	toBranchName: string;
+	noteBySource: string;
+	noteByDestination: string;
+	details: TransferDetail[];
+}
+
+export interface TransferDetail extends IDataObject {
+	id: number;
+	productId: number;
+	productCode: string;
+	productName: string;
+	transferredQuantity: number;
+	receivedQuantity?: number;
+	price: number;
+	totalTransfer: number;
+	totalReceive: number;
+}
+
+export interface TransferCreateParams {
+	fromBranchId: number;
+	toBranchId: number;
+	isDraft?: boolean;
+	code?: string;
+	description?: string;
+	status?: number;
+	transferDetails: TransferDetailCreateParams[];
+}
+
+export interface TransferDetailCreateParams {
+	productCode: string;
+	productId: number;
+	sendQuantity: number;
+	receivedQuantity?: number;
+	price: number;
+}
+
+export interface TransferUpdateParams extends Partial<TransferCreateParams> {
+	id: number;
+}
+
+export interface TransferListParams extends IDataObject {
+	toBranchIds?: number[];
+	fromBranchIds?: number[];
+	status?: number[];
+	pageSize?: number;
+	currentItem?: number;
+	fromReceivedDate?: string;
+	toReceivedDate?: string;
+	fromTransferDate?: string;
+	toTransferDate?: string;
+}
+
+export interface TransferHandler {
+	list(params?: TransferListParams): Promise<KiotVietListResponse<Transfer>>;
+	create(data: TransferCreateParams): Promise<Transfer>;
+	getById(id: number): Promise<Transfer>;
+	update?: (id: number, data: TransferUpdateParams) => Promise<Transfer>;
+	delete?: (id: number) => Promise<OperationResult>;
+}
