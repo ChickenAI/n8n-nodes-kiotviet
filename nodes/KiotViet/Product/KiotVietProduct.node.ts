@@ -233,6 +233,158 @@ export class KiotVietProduct implements INodeType {
 						default: true,
 						description: 'Sản phẩm có được phép bán hay không',
 					},
+					{
+						displayName: 'Mã Vạch',
+						name: 'barCode',
+						type: 'string',
+						default: '',
+						description: 'Mã vạch của sản phẩm (tối đa 16 ký tự)',
+					},
+					{
+						displayName: 'Tên Đầy Đủ',
+						name: 'fullName',
+						type: 'string',
+						default: '',
+						description: 'Tên sản phẩm bao gồm thuộc tính và đơn vị tính',
+					},
+					{
+						displayName: 'Có Thuộc Tính (hasVariants)',
+						name: 'hasVariants',
+						type: 'boolean',
+						default: false,
+						description: 'Sản phẩm có thuộc tính hay không',
+					},
+					{
+						displayName: 'Sản Phẩm Serial',
+						name: 'isProductSerial',
+						type: 'boolean',
+						default: false,
+						description: 'Có phải sản phẩm serial hay không',
+					},
+					{
+						displayName: 'Thuộc Tính (attributes)',
+						name: 'attributes',
+						type: 'fixedCollection',
+						placeholder: 'Thêm thuộc tính',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						options: [
+							{
+								displayName: 'Thuộc Tính',
+								name: 'attributes',
+								values: [
+									{
+										displayName: 'Tên Thuộc Tính',
+										name: 'attributeName',
+										type: 'string',
+										default: '',
+									},
+									{
+										displayName: 'Giá Trị Thuộc Tính',
+										name: 'attributeValue',
+										type: 'string',
+										default: '',
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'ID Hàng Hóa Cha',
+						name: 'masterProductId',
+						type: 'number',
+						default: undefined,
+						description: 'ID hàng hóa cùng loại (nếu có)',
+					},
+					{
+						displayName: 'ID Đơn Vị Cơ Bản',
+						name: 'masterUnitId',
+						type: 'number',
+						default: undefined,
+						description: 'ID của hàng hóa đơn vị cơ bản, = NULL nếu là đơn vị cơ bản',
+					},
+					{
+						displayName: 'Giá Trị Quy Đổi',
+						name: 'conversionValue',
+						type: 'number',
+						default: undefined,
+						description: 'Giá trị quy đổi giữa các đơn vị',
+					},
+					{
+						displayName: 'Tồn Kho (inventories)',
+						name: 'inventories',
+						type: 'fixedCollection',
+						placeholder: 'Thêm kho/chi nhánh',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						options: [
+							{
+								displayName: 'Kho',
+								name: 'inventories',
+								values: [
+									{
+										displayName: 'ID Chi Nhánh',
+										name: 'branchId',
+										type: 'number',
+										default: undefined,
+									},
+									{
+										displayName: 'Tên Chi Nhánh',
+										name: 'branchName',
+										type: 'string',
+										default: '',
+									},
+									{
+										displayName: 'Tồn Kho',
+										name: 'onHand',
+										type: 'number',
+										default: undefined,
+									},
+									{
+										displayName: 'Giá Vốn',
+										name: 'cost',
+										type: 'number',
+										default: undefined,
+									},
+								],
+							},
+						],
+					},
+					{
+						displayName: 'Trọng Lượng',
+						name: 'weight',
+						type: 'number',
+						default: undefined,
+						description: 'Trọng lượng sản phẩm',
+					},
+					{
+						displayName: 'Hình Ảnh (images)',
+						name: 'images',
+						type: 'fixedCollection',
+						placeholder: 'Thêm ảnh',
+						default: {},
+						typeOptions: {
+							multipleValues: true,
+						},
+						options: [
+							{
+								displayName: 'Ảnh',
+								name: 'images',
+								values: [
+									{
+										displayName: 'URL Ảnh',
+										name: 'imageUrl',
+										type: 'string',
+										default: '',
+									},
+								],
+							},
+						],
+					},
 				],
 			},
 			{
@@ -373,15 +525,66 @@ export class KiotVietProduct implements INodeType {
 					const retailPrice = this.getNodeParameter('retailPrice', i) as number;
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const productData: ProductCreateParams = {
+					const productData: any = {
 						name,
 						categoryId,
 						basePrice,
 						retailPrice,
-						...additionalFields,
 					};
 
-					const response = await productApi.create(productData);
+					// Simple scalar fields
+					if (additionalFields.code) productData.code = additionalFields.code as string;
+					if (additionalFields.barCode) productData.barCode = additionalFields.barCode as string;
+					if (additionalFields.fullName) productData.fullName = additionalFields.fullName as string;
+					if (additionalFields.allowsSale !== undefined) productData.allowsSale = !!additionalFields.allowsSale;
+					if (additionalFields.description) productData.description = additionalFields.description as string;
+					if (additionalFields.hasVariants !== undefined) productData.hasVariants = !!additionalFields.hasVariants;
+					if (additionalFields.isProductSerial !== undefined) productData.isProductSerial = !!additionalFields.isProductSerial;
+					if (additionalFields.unit) productData.unit = additionalFields.unit as string;
+					if (additionalFields.masterProductId) productData.masterProductId = parseInt(additionalFields.masterProductId as any, 10);
+					if (additionalFields.masterUnitId) productData.masterUnitId = parseInt(additionalFields.masterUnitId as any, 10);
+					if (additionalFields.conversionValue !== undefined) productData.conversionValue = Number(additionalFields.conversionValue);
+					if (additionalFields.weight !== undefined) productData.weight = Number(additionalFields.weight);
+					if (additionalFields.basePrice !== undefined) productData.basePrice = Number(additionalFields.basePrice);
+					if (additionalFields.isActive !== undefined) productData.isActive = !!additionalFields.isActive;
+					if (additionalFields.isRewardPoint !== undefined) productData.isRewardPoint = !!additionalFields.isRewardPoint;
+
+					// Attributes (fixedCollection)
+					if (additionalFields.attributes) {
+						const attributesCollection = (additionalFields.attributes as IDataObject).attributes as IDataObject[] | undefined;
+						if (Array.isArray(attributesCollection)) {
+							productData.attributes = attributesCollection.map((attr) => ({
+								attributeName: attr.attributeName as string,
+								attributeValue: attr.attributeValue as string,
+							}));
+						}
+					}
+
+					// Inventories (fixedCollection)
+					if (additionalFields.inventories) {
+						const inventoriesCollection = (additionalFields.inventories as IDataObject).inventories as IDataObject[] | undefined;
+						if (Array.isArray(inventoriesCollection)) {
+							productData.inventories = inventoriesCollection.map((inv) => ({
+								branchId: inv.branchId !== undefined ? parseInt(inv.branchId as any, 10) : undefined,
+								branchName: inv.branchName as string,
+								onHand: inv.onHand !== undefined ? Number(inv.onHand) : undefined,
+								cost: inv.cost !== undefined ? Number(inv.cost) : undefined,
+							}));
+						}
+					}
+
+					// Images (fixedCollection -> array of urls)
+					if (additionalFields.images) {
+						const imagesCollection = (additionalFields.images as IDataObject).images as IDataObject[] | undefined;
+						if (Array.isArray(imagesCollection)) {
+							productData.images = imagesCollection.map((img) => img.imageUrl as string).filter((u) => !!u);
+						}
+					}
+
+					// Allow category override in additionalFields
+					if (additionalFields.categoryId) productData.categoryId = parseInt(additionalFields.categoryId as any, 10);
+
+					const response = await productApi.create(productData as ProductCreateParams);
 					responseData = response as unknown as Product;
 				} else if (operation === 'get') {
 					const productId = parseInt(this.getNodeParameter('productId', i) as string);
@@ -460,11 +663,57 @@ export class KiotVietProduct implements INodeType {
 					const name = this.getNodeParameter('name', i) as string;
 					const additionalFields = this.getNodeParameter('additionalFields', i) as IDataObject;
 
-					const productData = {
+					const productData: any = {
 						id: productId,
 						name,
-						...additionalFields,
 					};
+
+					// Scalars
+					if (additionalFields.code) productData.code = additionalFields.code as string;
+					if (additionalFields.barCode) productData.barCode = additionalFields.barCode as string;
+					if (additionalFields.categoryId) productData.categoryId = parseInt(additionalFields.categoryId as any, 10);
+					if (additionalFields.allowsSale !== undefined) productData.allowsSale = !!additionalFields.allowsSale;
+					if (additionalFields.description) productData.description = additionalFields.description as string;
+					if (additionalFields.hasVariants !== undefined) productData.hasVariants = !!additionalFields.hasVariants;
+					if (additionalFields.unit) productData.unit = additionalFields.unit as string;
+					if (additionalFields.masterUnitId) productData.masterUnitId = parseInt(additionalFields.masterUnitId as any, 10);
+					if (additionalFields.conversionValue !== undefined) productData.conversionValue = Number(additionalFields.conversionValue);
+					if (additionalFields.basePrice !== undefined) productData.basePrice = Number(additionalFields.basePrice);
+					if (additionalFields.weight !== undefined) productData.weight = Number(additionalFields.weight);
+					if (additionalFields.isActive !== undefined) productData.isActive = !!additionalFields.isActive;
+					if (additionalFields.isRewardPoint !== undefined) productData.isRewardPoint = !!additionalFields.isRewardPoint;
+
+					// Attributes
+					if (additionalFields.attributes) {
+						const attributesCollection = (additionalFields.attributes as IDataObject).attributes as IDataObject[] | undefined;
+						if (Array.isArray(attributesCollection)) {
+							productData.attributes = attributesCollection.map((attr) => ({
+								attributeName: attr.attributeName as string,
+								attributeValue: attr.attributeValue as string,
+							}));
+						}
+					}
+
+					// Inventories
+					if (additionalFields.inventories) {
+						const inventoriesCollection = (additionalFields.inventories as IDataObject).inventories as IDataObject[] | undefined;
+						if (Array.isArray(inventoriesCollection)) {
+							productData.inventories = inventoriesCollection.map((inv) => ({
+								branchId: inv.branchId !== undefined ? parseInt(inv.branchId as any, 10) : undefined,
+								branchName: inv.branchName as string,
+								onHand: inv.onHand !== undefined ? Number(inv.onHand) : undefined,
+								cost: inv.cost !== undefined ? Number(inv.cost) : undefined,
+							}));
+						}
+					}
+
+					// Images
+					if (additionalFields.images) {
+						const imagesCollection = (additionalFields.images as IDataObject).images as IDataObject[] | undefined;
+						if (Array.isArray(imagesCollection)) {
+							productData.images = imagesCollection.map((img) => img.imageUrl as string).filter((u) => !!u);
+						}
+					}
 
 					const response = await productApi.update(productId, productData);
 					responseData = response as unknown as Product;
