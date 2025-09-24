@@ -117,16 +117,24 @@ export interface OrderHandler {
 // Invoice interfaces
 export interface InvoiceCreateParams extends IDataObject {
 	branchId: number;
+	purchaseDate?: string;
 	customerId?: number;
-	description?: string;
-	invoiceDetails: InvoiceDetail[];
 	discount?: number;
-	status?: 'Draft' | 'InProgress' | 'Completed' | 'Canceled';
-	paymentMethod?: PaymentMethod;
-	totalPayment?: number;
+	totalPayment: number;
+	method?: string;
+	accountId?: number;
+	usingCod?: boolean;
+	soldById?: number;
+	orderId?: number;
+	saleChannelId?: number;
+	isApplyVoucher?: boolean;
+	invoiceDetails: InvoiceDetail[];
+	deliveryDetail?: InvoiceDelivery;
+	customer?: InvoiceCustomer;
+	surchages?: InvoiceSurcharge[];
 }
 
-export interface InvoiceUpdateParams extends Partial<InvoiceCreateParams> {
+export interface InvoiceUpdateParams extends Partial<Omit<InvoiceCreateParams, 'orderId'>> {
 	id: number;
 }
 
@@ -137,27 +145,129 @@ export interface InvoiceDetail {
 	quantity: number;
 	price: number;
 	discount?: number;
+	discountRatio?: number;
 	note?: string;
+	serialNumbers?: string;
 }
 
-export type PaymentMethod = 'Cash' | 'Card' | 'Transfer' | 'Other';
+export interface InvoiceDelivery {
+	type?: number;
+	status: number;
+	price?: number;
+	receiver: string;
+	contactNumber: string;
+	address: string;
+	locationId?: number;
+	locationName?: string;
+	wardName?: string;
+	weight?: number;
+	length?: number;
+	width?: number;
+	height?: number;
+	partnerDeliveryId?: number;
+	expectedDelivery?: string;
+	partnerDelivery?: {
+		code: string;
+		name: string;
+		address: string;
+		contactNumber: string;
+		email: string;
+	};
+}
+
+export interface InvoiceCustomer {
+	id?: number;
+	code?: string;
+	name: string;
+	gender?: boolean;
+	birthDate?: string;
+	contactNumber?: string;
+	address?: string;
+	email?: string;
+	comment?: string;
+}
+
+export interface InvoiceSurcharge {
+	id: number;
+	code: string;
+	price: number;
+}
+
+export type PaymentMethod = 'Cash' | 'Card' | 'BankTransfer' | 'MobilePayment' | 'Mixed';
 
 export interface Invoice extends IDataObject {
 	id: number;
 	code: string;
+	orderCode?: string;
+	purchaseDate: string;
 	branchId: number;
+	branchName: string;
 	customerId?: number;
+	customerCode?: string;
 	customerName?: string;
-	discount?: number;
-	description?: string;
-	status: 'Draft' | 'InProgress' | 'Completed' | 'Canceled';
 	total: number;
 	totalPayment: number;
-	remainAmount: number;
-	paymentMethod: PaymentMethod;
+	discount?: number;
+	discountRatio?: number;
+	description?: string;
+	status: number;
+	statusValue: string;
+	usingCod: boolean;
 	invoiceDetails: InvoiceDetail[];
+	invoiceOrderSurcharges?: Array<{
+		id: number;
+		invoiceId?: number;
+		surchargeId?: number;
+		surchargeName: string;
+		surValue?: number;
+		price?: number;
+		createdDate: string;
+	}>;
+	invoiceDelivery?: {
+		deliveryCode: string;
+		type?: number;
+		status: number;
+		statusValue: string;
+		price?: number;
+		receiver: string;
+		contactNumber: string;
+		address: string;
+		locationId?: number;
+		locationName?: string;
+		usingPriceCod: boolean;
+		priceCodPayment: number;
+		weight?: number;
+		length?: number;
+		width?: number;
+		height?: number;
+		partnerDeliveryId?: number;
+		partnerDelivery?: {
+			code: string;
+			name: string;
+			address: string;
+			contactNumber: string;
+			email: string;
+		};
+	};
+	payments: Array<{
+		id: number;
+		code: string;
+		amount: number;
+		method: string;
+		status?: number;
+		statusValue?: string;
+		transDate: string;
+		bankAccount?: string;
+		accountId?: number;
+		description?: string;
+	}>;
+	retailerId: number;
+	soldById?: number;
+	soldByName?: string;
+	saleChannelId?: number;
+	modifiedDate?: string;
 	createdDate: string;
-	modifiedDate: string;
+	orderId?: number;
 }
 
 export interface InvoiceHandler {
@@ -166,7 +276,7 @@ export interface InvoiceHandler {
 	getById(id: number): Promise<Invoice>;
 	getByCode(code: string): Promise<Invoice>;
 	update?: (id: number, data: InvoiceUpdateParams) => Promise<Invoice>;
-	cancel?: (id: number, reason?: string) => Promise<Invoice>;
+	delete?: (id: number, isVoidPayment?: boolean) => Promise<void>;
 }
 
 // Customer interfaces

@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-kiotviet",
-	"version": "0.4.3",
+	"version": "0.4.5",
 	"description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, and invoices management",
 	"keywords": [
 		"n8n-community-node-package",

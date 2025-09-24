@@ -73,10 +73,10 @@ export class KiotVietInvoice implements INodeType {
 						action: 'Cập nhật hóa đơn',
 					},
 					{
-						name: 'Hủy',
-						value: 'cancel',
-						description: 'Hủy hóa đơn',
-						action: 'Hủy hóa đơn',
+						name: 'Xóa',
+						value: 'delete',
+						description: 'Xóa hóa đơn',
+						action: 'Xóa hóa đơn',
 					},
 				],
 				default: 'getAll',
@@ -89,7 +89,7 @@ export class KiotVietInvoice implements INodeType {
 				default: '',
 				displayOptions: {
 					show: {
-						operation: ['get', 'update', 'cancel'],
+						operation: ['get', 'update', 'delete'],
 					},
 				},
 				description: 'ID của hóa đơn',
@@ -175,6 +175,22 @@ export class KiotVietInvoice implements INodeType {
 								description: 'Mã định danh sản phẩm',
 							},
 							{
+								displayName: 'Mã Sản Phẩm',
+								name: 'productCode',
+								type: 'string',
+								default: '',
+								required: true,
+								description: 'Mã sản phẩm',
+							},
+							{
+								displayName: 'Tên Sản Phẩm',
+								name: 'productName',
+								type: 'string',
+								default: '',
+								required: true,
+								description: 'Tên sản phẩm',
+							},
+							{
 								displayName: 'Số Lượng',
 								name: 'quantity',
 								type: 'number',
@@ -198,11 +214,25 @@ export class KiotVietInvoice implements INodeType {
 								description: 'Số tiền giảm giá cho sản phẩm',
 							},
 							{
+								displayName: 'Tỷ Lệ Giảm Giá (%)',
+								name: 'discountRatio',
+								type: 'number',
+								default: 0,
+								description: 'Tỷ lệ giảm giá (phần trăm)',
+							},
+							{
 								displayName: 'Ghi Chú',
 								name: 'note',
 								type: 'string',
 								default: '',
 								description: 'Ghi chú cho sản phẩm',
+							},
+							{
+								displayName: 'Số Serial',
+								name: 'serialNumbers',
+								type: 'string',
+								default: '',
+								description: 'Số serial của sản phẩm',
 							},
 						],
 					},
@@ -264,22 +294,22 @@ export class KiotVietInvoice implements INodeType {
 						options: [
 							{
 								name: 'Nháp',
-								value: 'Draft',
+								value: 1,
 							},
 							{
-								name: 'ĐAng Xử Lý',
-								value: 'InProgress',
+								name: 'Đang Xử Lý',
+								value: 2,
 							},
 							{
 								name: 'Hoàn Thành',
-								value: 'Completed',
+								value: 3,
 							},
 							{
-								name: 'ĐÃ Hủy',
-								value: 'Canceled',
+								name: 'Đã Hủy',
+								value: 4,
 							},
 						],
-						default: 'InProgress',
+						default: 2,
 						description: 'Lọc theo trạng thái hóa đơn',
 					},
 				],
@@ -297,6 +327,14 @@ export class KiotVietInvoice implements INodeType {
 				},
 				options: [
 					{
+						displayName: 'Tổng Thanh Toán',
+						name: 'totalPayment',
+						type: 'number',
+						default: 0,
+						required: true,
+						description: 'Tổng số tiền thanh toán (bắt buộc)',
+					},
+					{
 						displayName: 'ID Khách Hàng',
 						name: 'customerId',
 						type: 'string',
@@ -304,11 +342,11 @@ export class KiotVietInvoice implements INodeType {
 						description: 'Mã định danh khách hàng',
 					},
 					{
-						displayName: 'Mô Tả',
-						name: 'description',
+						displayName: 'Ngày Mua Hàng',
+						name: 'purchaseDate',
 						type: 'string',
 						default: '',
-						description: 'Mô tả hóa đơn',
+						description: 'Ngày mua hàng (định dạng YYYY-MM-DD)',
 					},
 					{
 						displayName: 'Giảm Giá',
@@ -319,7 +357,7 @@ export class KiotVietInvoice implements INodeType {
 					},
 					{
 						displayName: 'Phương Thức Thanh Toán',
-						name: 'paymentMethod',
+						name: 'method',
 						type: 'options',
 						options: [
 							{
@@ -332,21 +370,61 @@ export class KiotVietInvoice implements INodeType {
 							},
 							{
 								name: 'Chuyển Khoản',
-								value: 'Transfer',
+								value: 'BankTransfer',
 							},
 							{
-								name: 'Khác',
-								value: 'Other',
+								name: 'Thanh Toán Di Động',
+								value: 'MobilePayment',
+							},
+							{
+								name: 'Kết Hợp',
+								value: 'Mixed',
 							},
 						],
 						default: 'Cash',
+						description: 'Phương thức thanh toán',
 					},
 					{
-						displayName: 'Số Tiền Thanh Toán',
-						name: 'totalPayment',
+						displayName: 'ID Tài Khoản',
+						name: 'accountId',
 						type: 'number',
 						default: 0,
-						description: 'Số tiền khách hàng thanh toán',
+						description: 'ID tài khoản ngân hàng (bắt buộc với Card/BankTransfer)',
+					},
+					{
+						displayName: 'Sử Dụng COD',
+						name: 'usingCod',
+						type: 'boolean',
+						default: false,
+						description: 'Sử dụng thanh toán COD',
+					},
+					{
+						displayName: 'ID Nhân Viên Bán',
+						name: 'soldById',
+						type: 'number',
+						default: 0,
+						description: 'ID nhân viên thực hiện bán hàng',
+					},
+					{
+						displayName: 'ID Đơn Hàng',
+						name: 'orderId',
+						type: 'number',
+						default: 0,
+						description: 'ID đơn hàng liên quan',
+					},
+					{
+						displayName: 'ID Kênh Bán',
+						name: 'saleChannelId',
+						type: 'number',
+						default: 0,
+						description: 'ID kênh bán hàng',
+					},
+					{
+						displayName: 'Áp Dụng Voucher',
+						name: 'isApplyVoucher',
+						type: 'boolean',
+						default: false,
+						description: 'Có áp dụng voucher không',
 					},
 				],
 			},
@@ -378,20 +456,50 @@ export class KiotVietInvoice implements INodeType {
 
 					const invoiceData: InvoiceCreateParams = {
 						branchId,
+						totalPayment: additionalFields.totalPayment as number,
 						invoiceDetails: invoiceDetailsData.map((product) => ({
 							productId: parseInt(product.productId as string),
-							productCode: '',
-							productName: '',
+							productCode: product.productCode as string,
+							productName: product.productName as string,
 							quantity: product.quantity as number,
 							price: product.price as number,
-							discount: product.discount as number,
-							note: product.note as string,
+							discount: product.discount as number || 0,
+							discountRatio: product.discountRatio as number || 0,
+							note: product.note as string || '',
+							serialNumbers: product.serialNumbers as string || '',
 						})),
-						...additionalFields,
 					};
 
+					// Add optional fields
 					if (additionalFields.customerId) {
 						invoiceData.customerId = parseInt(additionalFields.customerId as string);
+					}
+					if (additionalFields.purchaseDate) {
+						invoiceData.purchaseDate = additionalFields.purchaseDate as string;
+					}
+					if (additionalFields.discount) {
+						invoiceData.discount = additionalFields.discount as number;
+					}
+					if (additionalFields.method) {
+						invoiceData.method = additionalFields.method as string;
+					}
+					if (additionalFields.accountId) {
+						invoiceData.accountId = additionalFields.accountId as number;
+					}
+					if (additionalFields.usingCod) {
+						invoiceData.usingCod = additionalFields.usingCod as boolean;
+					}
+					if (additionalFields.soldById) {
+						invoiceData.soldById = additionalFields.soldById as number;
+					}
+					if (additionalFields.orderId) {
+						invoiceData.orderId = additionalFields.orderId as number;
+					}
+					if (additionalFields.saleChannelId) {
+						invoiceData.saleChannelId = additionalFields.saleChannelId as number;
+					}
+					if (additionalFields.isApplyVoucher) {
+						invoiceData.isApplyVoucher = additionalFields.isApplyVoucher as boolean;
 					}
 
 					const response = await invoiceApi.create(invoiceData);
@@ -467,31 +575,68 @@ export class KiotVietInvoice implements INodeType {
 
 					const invoiceData: InvoiceUpdateParams = {
 						id: invoiceId,
-						invoiceDetails: invoiceDetailsData.map((product) => ({
+					};
+
+					// Add invoice details if provided
+					if (invoiceDetailsData.length > 0) {
+						invoiceData.invoiceDetails = invoiceDetailsData.map((product) => ({
 							productId: parseInt(product.productId as string),
-							productCode: '',
-							productName: '',
+							productCode: product.productCode as string,
+							productName: product.productName as string,
 							quantity: product.quantity as number,
 							price: product.price as number,
-							discount: product.discount as number,
-							note: product.note as string,
-						})),
-						...additionalFields,
-					};
+							discount: product.discount as number || 0,
+							discountRatio: product.discountRatio as number || 0,
+							note: product.note as string || '',
+							serialNumbers: product.serialNumbers as string || '',
+						}));
+					}
+
+					// Add optional fields
+					if (additionalFields.totalPayment) {
+						invoiceData.totalPayment = additionalFields.totalPayment as number;
+					}
+					if (additionalFields.customerId) {
+						invoiceData.customerId = parseInt(additionalFields.customerId as string);
+					}
+					if (additionalFields.purchaseDate) {
+						invoiceData.purchaseDate = additionalFields.purchaseDate as string;
+					}
+					if (additionalFields.discount) {
+						invoiceData.discount = additionalFields.discount as number;
+					}
+					if (additionalFields.method) {
+						invoiceData.method = additionalFields.method as string;
+					}
+					if (additionalFields.accountId) {
+						invoiceData.accountId = additionalFields.accountId as number;
+					}
+					if (additionalFields.usingCod) {
+						invoiceData.usingCod = additionalFields.usingCod as boolean;
+					}
+					if (additionalFields.soldById) {
+						invoiceData.soldById = additionalFields.soldById as number;
+					}
+					if (additionalFields.saleChannelId) {
+						invoiceData.saleChannelId = additionalFields.saleChannelId as number;
+					}
+					if (additionalFields.isApplyVoucher) {
+						invoiceData.isApplyVoucher = additionalFields.isApplyVoucher as boolean;
+					}
 
 					const response = await invoiceApi.update(invoiceId, invoiceData);
 					responseData = response as unknown as IDataObject;
-				} else if (operation === 'cancel') {
-					if (!invoiceApi.cancel) {
+				} else if (operation === 'delete') {
+					if (!invoiceApi.delete) {
 						throw new NodeOperationError(
 							this.getNode(),
-							'Cancel operation is not supported by the KiotViet API',
+							'Delete operation is not supported by the KiotViet API',
 						);
 					}
 
 					const invoiceId = parseInt(this.getNodeParameter('invoiceId', i) as string);
-					const response = await invoiceApi.cancel(invoiceId);
-					responseData = response as unknown as IDataObject;
+					await invoiceApi.delete(invoiceId, true);
+					responseData = { success: true, message: 'Invoice deleted successfully' };
 				}
 
 				const executionData = this.helpers.constructExecutionMetaData(
