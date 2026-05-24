@@ -1,7 +1,7 @@
 {
 	"name": "n8n-nodes-kiotviet",
-	"version": "0.4.5",
-		"description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, invoices, vouchers, cash flow, price books, and more",
+	"version": "0.5.0",
+	"description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, invoices, vouchers, cash flow, price books, and more",
 	"keywords": [
 		"n8n-community-node-package",
 		"kiotviet",
