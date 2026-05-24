@@ -722,3 +722,300 @@ export interface TransferHandler {
 	update?: (id: number, data: TransferUpdateParams) => Promise<Transfer>;
 	delete?: (id: number) => Promise<OperationResult>;
 }
+
+// Bank Account interfaces
+export interface BankAccount extends IDataObject {
+	id: number;
+	accountNumber: string;
+	accountName: string;
+	bankId: number;
+	bankName: string;
+	branchName?: string;
+	accountHolder: string;
+	description?: string;
+	isActive: boolean;
+	retailerId: number;
+	createdBy?: number;
+	createdDate: string;
+	modifiedDate?: string;
+	balance?: number;
+	bankCode?: string;
+}
+
+export interface BankAccountHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<BankAccount>>;
+	getById(id: number): Promise<BankAccount>;
+}
+
+// Cash Flow interfaces
+export interface CashFlow extends IDataObject {
+	id: number;
+	code: string;
+	address?: string;
+	branchId: number;
+	wardName?: string;
+	contactNumber?: string;
+	createdBy: number;
+	usedForFinancialReporting: number;
+	cashFlowGroupId?: number;
+	method: string;
+	partnerType: string;
+	partnerId?: number;
+	status: number;
+	statusValue: string;
+	transDate: string;
+	amount: number;
+	partnerName: string;
+	user: string;
+	accountId?: number;
+	description?: string;
+}
+
+export interface CashFlowHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<CashFlow>>;
+	processPayment(data: IDataObject): Promise<IDataObject>;
+}
+
+// Price Book interfaces
+export interface PriceBook extends IDataObject {
+	id: number;
+	code: string;
+	name: string;
+	description?: string;
+	isActive: boolean;
+	isGlobal: boolean;
+	startDate?: string;
+	endDate?: string;
+	forAllCusGroup: boolean;
+	forAllBranch: boolean;
+	forAllUser: boolean;
+	retailerId: number;
+	createdDate: string;
+	modifiedDate?: string;
+}
+
+export interface PriceBookHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<PriceBook>>;
+	getById(id: number): Promise<IDataObject>;
+	updatePriceDetail(data: IDataObject): Promise<void>;
+}
+
+// Return interfaces
+export interface Return extends IDataObject {
+	id: number;
+	code: string;
+	invoiceId?: number;
+	returnDate: string;
+	branchId: number;
+	branchName: string;
+	receivedById: number;
+	soldByName: string;
+	customerId?: number;
+	customerCode?: string;
+	customerName?: string;
+	returnTotal: number;
+	totalPayment: number;
+	returnDiscount?: number;
+	returnFee?: number;
+	status: number;
+	statusValue: string;
+	createdDate: string;
+	modifiedDate?: string;
+	returnDetails: IDataObject[];
+}
+
+export interface ReturnHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<Return>>;
+	getById(id: number): Promise<Return>;
+	getByCode(code: string): Promise<Return>;
+}
+
+// Sales Channel interfaces
+export interface SalesChannel extends IDataObject {
+	id: number;
+	name: string;
+	description?: string;
+	retailerId?: number;
+	status: boolean;
+	createdDate: string;
+	modifiedDate?: string;
+}
+
+export interface SalesChannelHandler {
+	list(): Promise<KiotVietListResponse<SalesChannel>>;
+}
+
+// Setting interfaces
+export interface Setting extends IDataObject {
+	managerCustomerByBranch: boolean;
+	allowOrderWhenOutStock: boolean;
+	allowSellWhenOrderOutStock: boolean;
+	allowSellWhenOutStock: boolean;
+}
+
+export interface SettingsHandler {
+	get(): Promise<Setting>;
+}
+
+// Surcharge interfaces
+export interface Surcharge extends IDataObject {
+	id: number;
+	code: string;
+	name: string;
+	value: number;
+	isPercent: boolean;
+	isAutoAdd: boolean;
+	isRequired: boolean;
+	description?: string;
+	isActive: boolean;
+	retailerId: number;
+	branchId?: number;
+	branchIds?: number[];
+	createdBy?: string;
+	createdDate: string;
+	modifiedDate?: string;
+}
+
+export interface SurchargeHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<Surcharge>>;
+	getById(id: number): Promise<Surcharge>;
+	create(data: IDataObject): Promise<Surcharge>;
+	update(id: number, data: IDataObject): Promise<Surcharge>;
+	delete(id: number): Promise<void>;
+}
+
+// Trademark interfaces
+export interface Trademark extends IDataObject {
+	trademarkId: number;
+	name: string;
+	description?: string;
+	status: boolean;
+	retailerId?: number;
+	createdDate: string;
+	modifiedDate?: string;
+}
+
+export interface TrademarkHandler {
+	list(): Promise<KiotVietListResponse<Trademark>>;
+}
+
+// User interfaces
+export interface User extends IDataObject {
+	id: number;
+	userName: string;
+	givenName: string;
+	address?: string;
+	mobilePhone?: string;
+	email?: string;
+	description?: string;
+	retailerId: number;
+	birthDate?: string;
+	createdDate: string;
+	modifiedDate?: string;
+}
+
+export interface UserHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<User>>;
+	getById(id: number): Promise<User>;
+	getActive(params?: IDataObject): Promise<KiotVietListResponse<User>>;
+	getByBranch(branchId: number, params?: IDataObject): Promise<KiotVietListResponse<User>>;
+	search(query: string, params?: IDataObject): Promise<KiotVietListResponse<User>>;
+}
+
+// Voucher interfaces
+export interface Voucher extends IDataObject {
+	id: number;
+	code: string;
+	campaignId: number;
+	campaignCode: string;
+	campaignName: string;
+	startDate: string;
+	endDate: string;
+	status: number;
+	statusValue: string;
+	isUsed: boolean;
+	usedDate?: string;
+	customerId?: number;
+	customerCode?: string;
+	customerName?: string;
+	orderId?: number;
+	orderCode?: string;
+	discountValue: number;
+	createdDate: string;
+	createdBy: number;
+	modifiedDate?: string;
+	modifiedBy?: number;
+}
+
+export interface VoucherCampaign extends IDataObject {
+	id: number;
+	code: string;
+	name: string;
+	description?: string;
+	startDate: string;
+	endDate: string;
+	status: number;
+	statusValue: string;
+	isActive: boolean;
+	createdDate: string;
+	createdBy: number;
+	modifiedDate?: string;
+	modifiedBy?: number;
+	branchId: number;
+	branchIds?: number[];
+	customerGroupIds?: number[];
+	discountType: number;
+	discountValue: number;
+	minOrderValue?: number;
+	maxDiscountValue?: number;
+	quantity: number;
+	usedQuantity: number;
+	remainingQuantity: number;
+	isAutoGenerate: boolean;
+	isUnlimited: boolean;
+}
+
+export interface VoucherHandler {
+	listCampaigns(params?: IDataObject): Promise<KiotVietListResponse<VoucherCampaign>>;
+	getCampaign(id: number): Promise<VoucherCampaign>;
+	createCampaign(data: IDataObject): Promise<VoucherCampaign>;
+	updateCampaign(data: IDataObject): Promise<VoucherCampaign>;
+	deleteCampaign(id: number): Promise<void>;
+	list(params?: IDataObject): Promise<KiotVietListResponse<Voucher>>;
+	get(id: number): Promise<Voucher>;
+	getByCode(code: string): Promise<Voucher>;
+}
+
+// Order Supplier interfaces
+export interface OrderSupplier extends IDataObject {
+	id: number;
+	code: string;
+	invoiceId?: number;
+	orderDate: string;
+	branchId: number;
+	retailerId: number;
+	userId: number;
+	description?: string;
+	status: number;
+	discountRatio?: string;
+	productQty?: number;
+	discount?: number;
+	createdDate: string;
+	createdBy: number;
+	orderSupplierDetails: IDataObject[];
+	orderSupplierExpensesOthers?: IDataObject[];
+	total: number;
+	totalQuantity: number;
+	subTotal: number;
+	paidAmount: number;
+	toComplete: boolean;
+	statusValue: string;
+	viewPrice: boolean;
+	supplierDebt: number;
+	supplierOldDebt: number;
+}
+
+export interface OrderSupplierHandler {
+	list(params?: IDataObject): Promise<KiotVietListResponse<OrderSupplier>>;
+	getById(id: number): Promise<OrderSupplier>;
+}

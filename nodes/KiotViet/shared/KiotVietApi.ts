@@ -257,6 +257,61 @@ export class KiotVietApiBase {
 		return this.client.transfers;
 	}
 
+	async bankAccounts() {
+		if (!this.client) await this.init();
+		return this.client.bankAccounts;
+	}
+
+	async cashFlow() {
+		if (!this.client) await this.init();
+		return this.client.cashFlow;
+	}
+
+	async priceBooks() {
+		if (!this.client) await this.init();
+		return this.client.priceBooks;
+	}
+
+	async returns() {
+		if (!this.client) await this.init();
+		return this.client.returns;
+	}
+
+	async salesChannels() {
+		if (!this.client) await this.init();
+		return this.client.salesChannels;
+	}
+
+	async settings() {
+		if (!this.client) await this.init();
+		return this.client.settings;
+	}
+
+	async surcharges() {
+		if (!this.client) await this.init();
+		return this.client.surcharges;
+	}
+
+	async trademarks() {
+		if (!this.client) await this.init();
+		return this.client.trademarks;
+	}
+
+	async users() {
+		if (!this.client) await this.init();
+		return this.client.users;
+	}
+
+	async vouchers() {
+		if (!this.client) await this.init();
+		return this.client.vouchers;
+	}
+
+	async orderSuppliers() {
+		if (!this.client) await this.init();
+		return this.client.orderSuppliers;
+	}
+
 	// Helper method to handle pagination parameters
 	getPaginationParameters(qs: IDataObject) {
 		return {

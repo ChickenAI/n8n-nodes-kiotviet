@@ -1,7 +1,7 @@
 {
 	"name": "n8n-nodes-kiotviet",
 	"version": "0.4.5",
-	"description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, and invoices management",
+		"description": "n8n integration package for KiotViet retail management system - supporting products, customers, orders, invoices, vouchers, cash flow, price books, and more",
 	"keywords": [
 		"n8n-community-node-package",
 		"kiotviet",
@@ -56,25 +56,42 @@
 			"dist/nodes/KiotViet/PurchaseOrder/KiotVietPurchaseOrder.node.js",
 			"dist/nodes/KiotViet/Branch/KiotVietBranch.node.js",
 			"dist/nodes/KiotViet/Supplier/KiotVietSupplier.node.js",
-			"dist/nodes/KiotViet/Transfer/KiotVietTransfer.node.js"
+			"dist/nodes/KiotViet/Transfer/KiotVietTransfer.node.js",
+			"dist/nodes/KiotViet/BankAccount/KiotVietBankAccount.node.js",
+			"dist/nodes/KiotViet/CashFlow/KiotVietCashFlow.node.js",
+			"dist/nodes/KiotViet/PriceBook/KiotVietPriceBook.node.js",
+			"dist/nodes/KiotViet/Returns/KiotVietReturns.node.js",
+			"dist/nodes/KiotViet/SalesChannels/KiotVietSalesChannels.node.js",
+			"dist/nodes/KiotViet/Settings/KiotVietSettings.node.js",
+			"dist/nodes/KiotViet/Surcharge/KiotVietSurcharge.node.js",
+			"dist/nodes/KiotViet/Trademarks/KiotVietTrademarks.node.js",
+			"dist/nodes/KiotViet/Users/KiotVietUsers.node.js",
+			"dist/nodes/KiotViet/Vouchers/KiotVietVouchers.node.js",
+			"dist/nodes/KiotViet/OrderSuppliers/KiotVietOrderSuppliers.node.js"
 		],
 		"credentials": [
 			"dist/credentials/KiotVietApi.credentials.js"
 		]
 	},
 	"devDependencies": {
+		"@types/lodash": "^4.17.24",
 		"@types/node": "^20.11.30",
+		"@types/request": "^2.48.13",
+		"@types/semver": "^7.7.1",
+		"@types/whatwg-url": "^13.0.0",
 		"@typescript-eslint/parser": "^7.15.0",
 		"eslint": "^8.56.0",
 		"eslint-plugin-n8n-nodes-base": "^1.16.1",
 		"gulp": "^4.0.2",
+		"n8n-core": "^2.16.1",
+		"n8n-workflow": "^2.16.0",
 		"prettier": "^3.3.2",
 		"rimraf": "^5.0.5",
 		"typescript": "^5.5.3"
 	},
 	"dependencies": {
 		"crypto": "^1.0.1",
-		"kiotviet-client-sdk": "^0.3.4"
+		"kiotviet-client-sdk": "^0.4.0"
 	},
 	"peerDependencies": {
 		"n8n-core": ">=1.0.0",
